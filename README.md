@@ -65,7 +65,7 @@ abstract class UserApi {
 | `@Part('file')` | Multipart part (with `ContentType.formData`). |
 | `@StreamResponse()` | Return stream (SSE / line stream). |
 
-More: [Annotations](https://github.com/Dong-Hong-Li/net_retrofit_kit/blob/main/docs/02-annotations.md) · [Configuration](https://github.com/Dong-Hong-Li/net_retrofit_kit/blob/main/docs/03-configuration.md) · [Multiple clients](https://github.com/Dong-Hong-Li/net_retrofit_kit/blob/main/docs/04-multi-client.md) · [Example](https://github.com/Dong-Hong-Li/net_retrofit_kit/blob/main/docs/05-example.md)
+More: [Annotations](https://github.com/Dong-Hong-Li/net_retrofit_kit/blob/main/doc/02-annotations.md) · [Configuration](https://github.com/Dong-Hong-Li/net_retrofit_kit/blob/main/doc/03-configuration.md) · [Multiple clients](https://github.com/Dong-Hong-Li/net_retrofit_kit/blob/main/doc/04-multi-client.md) · [Example](https://github.com/Dong-Hong-Li/net_retrofit_kit/blob/main/doc/05-example.md)
 
 ---
 

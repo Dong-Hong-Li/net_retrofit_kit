@@ -65,7 +65,7 @@ abstract class UserApi {
 | `@Part('file')` | 多部分表单（配合 `ContentType.formData`）。 |
 | `@StreamResponse()` | 返回流（SSE / 按行）。 |
 
-更多：[注解说明](https://github.com/Dong-Hong-Li/net_retrofit_kit/blob/main/docs/02-注解说明.md) · [配置](https://github.com/Dong-Hong-Li/net_retrofit_kit/blob/main/docs/03-配置.md) · [多 Client](https://github.com/Dong-Hong-Li/net_retrofit_kit/blob/main/docs/04-多Client.md) · [示例](https://github.com/Dong-Hong-Li/net_retrofit_kit/blob/main/docs/05-示例.md)
+更多：[注解说明](https://github.com/Dong-Hong-Li/net_retrofit_kit/blob/main/doc/02-注解说明.md) · [配置](https://github.com/Dong-Hong-Li/net_retrofit_kit/blob/main/doc/03-配置.md) · [多 Client](https://github.com/Dong-Hong-Li/net_retrofit_kit/blob/main/doc/04-多Client.md) · [示例](https://github.com/Dong-Hong-Li/net_retrofit_kit/blob/main/doc/05-示例.md)
 
 ---
 

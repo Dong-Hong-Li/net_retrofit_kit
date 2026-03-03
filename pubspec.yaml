@@ -17,12 +17,13 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  dio: ">=5.0.0 < 5.9.1"
-
+  dio: ">=5.0.0 <6.0.0"
+  analyzer: ">=8.1.1 <11.0.0"
+  build: ">=3.0.0 <5.0.0"
+  source_gen: ">=4.2.0 <5.0.0"
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ">=5.0.0 <7.0.0"
-  source_gen: ">=4.2.0 <5.0.0"
   build_runner: ">=2.4.15 <3.0.0" 
