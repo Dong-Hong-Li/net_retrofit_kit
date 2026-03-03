@@ -1,6 +1,6 @@
 name: net_retrofit_kit
-description: "基于 Dio 的声明式 HTTP 客户端：用注解定义 API 接口并自动生成实现，少写样板代码，支持多 Client、自定义响应解析与统一错误处理，便于接入现有项目。"
-version: 0.2.1
+description: "Declarative HTTP client built on Dio: define APIs with annotations and generate implementations with build_runner. Supports multiple clients, custom parsing, and unified error handling."
+version: 0.2.2
 repository: https://github.com/Dong-Hong-Li/net_retrofit_kit
 homepage: https://github.com/Dong-Hong-Li/net_retrofit_kit
 documentation: https://github.com/Dong-Hong-Li/net_retrofit_kit#readme
@@ -17,7 +17,7 @@ dependencies:
   flutter:
     sdk: flutter
   dio: ">=5.0.0 <6.0.0"
-  analyzer: ">=8.1.1 <11.0.0"
+  analyzer: ">=8.1.1 <12.0.0"
   build: ">=3.0.0 <5.0.0"
   source_gen: ">=4.2.0 <5.0.0"
 

@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 
 /// 错误类型：统一用这一套，不再使用 HttpError / NetRequestShoppingException / NetRequestShoppingRreject。
 enum ApiErrorKind {
-  /// 网络层异常（如 DioException、超时、断网）
+  /// 网络层异常（如 DioError、超时、断网）
   networkFailure,
 
   /// 业务拒绝：HTTP 200 但 code != BusinessCode.success
@@ -30,8 +30,8 @@ class ApiError implements Exception {
   });
 
   /// 从 Dio 异常构造（网络失败或取消）
-  factory ApiError.fromDioException(DioException e) {
-    final kind = e.type == DioExceptionType.cancel
+  factory ApiError.fromDioError(DioError e) {
+    final kind = e.type == DioErrorType.cancel
         ? ApiErrorKind.cancelled
         : ApiErrorKind.networkFailure;
     return ApiError(

@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 // 示例工程内自维护的默认 [INetClient] 实现（插件内不再提供 DefaultNetClient，业务需自行实现或拷贝本类）。
 
 import 'dart:convert';
@@ -46,8 +48,8 @@ class DefaultNetClient implements INetClient {
 
       _ensureSuccessStatus(response);
       return _handleResponseJson<T>(response, parser: parser);
-    } on DioException catch (e) {
-      throw ApiError.fromDioException(e);
+    } on DioError catch (e) {
+      throw ApiError.fromDioError(e);
     }
   }
 

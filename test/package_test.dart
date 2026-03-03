@@ -124,22 +124,22 @@ void main() {
       expect(e.toString(), contains('networkFailure'));
     });
 
-    test('fromDioException cancel', () {
-      final dioEx = DioException(
+    test('fromDioError cancel', () {
+      final dioEx = DioError(
         requestOptions: RequestOptions(path: '/'),
-        type: DioExceptionType.cancel,
+        type: DioErrorType.cancel,
       );
-      final e = ApiError.fromDioException(dioEx);
+      final e = ApiError.fromDioError(dioEx);
       expect(e.kind, ApiErrorKind.cancelled);
       expect(e.cause, dioEx);
     });
 
-    test('fromDioException non-cancel', () {
-      final dioEx = DioException(
+    test('fromDioError non-cancel', () {
+      final dioEx = DioError(
         requestOptions: RequestOptions(path: '/'),
-        type: DioExceptionType.connectionTimeout,
+        type: DioErrorType.connectionTimeout,
       );
-      final e = ApiError.fromDioException(dioEx);
+      final e = ApiError.fromDioError(dioEx);
       expect(e.kind, ApiErrorKind.networkFailure);
     });
 

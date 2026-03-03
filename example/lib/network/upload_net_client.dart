@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 // 自定义 Client 示例：实现 [INetClient]，上传请求走独立逻辑（如专用 baseUrl、超时、自定义请求头等）。
 
 import 'dart:convert';
@@ -52,8 +54,8 @@ class UploadNetClient implements INetClient {
       );
       _ensureSuccessStatus(response);
       return _handleResponseJson<T>(response, parser: parser);
-    } on DioException catch (e) {
-      throw ApiError.fromDioException(e);
+    } on DioError catch (e) {
+      throw ApiError.fromDioError(e);
     }
   }
 

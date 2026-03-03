@@ -39,7 +39,7 @@ class HttpLoggingInterceptor extends Interceptor {
   }
 
   @override
-  void onError(DioException err, ErrorInterceptorHandler handler) {
+  void onError(DioError err, ErrorInterceptorHandler handler) {
     HttpLogger.logError(
       err.requestOptions.uri.toString(),
       err,

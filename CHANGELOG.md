@@ -8,7 +8,7 @@
 
 ---
 
-## [0.2.1](https://github.com/Dong-Hong-Li/net_retrofit_kit/releases/tag/v0.2.1) - 2026-03-03
+## [0.2.2](https://github.com/Dong-Hong-Li/net_retrofit_kit/releases/tag/v0.2.2) - 2026-03-03
 
 ### Added / 新增
 

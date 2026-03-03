@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:net_retrofit_kit_example/server/demo_server.dart';
@@ -33,8 +35,8 @@ class _StreamRequestPageState extends State<StreamRequestPage> {
         _lines = ['开始请求…', ...result, '--- stream 结束 ---'];
         _loading = false;
       });
-    } on DioException catch (e) {
-      if (e.type == DioExceptionType.cancel) {
+    } on DioError catch (e) {
+      if (e.type == DioErrorType.cancel) {
         setState(() {
           _lines = [..._lines, '已取消'];
           _loading = false;
