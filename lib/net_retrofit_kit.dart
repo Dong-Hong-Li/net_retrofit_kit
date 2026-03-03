@@ -15,6 +15,7 @@ export 'src/network/inet_client.dart';
 export 'src/network/net_options.dart';
 export 'src/network/net_request.dart';
 export 'src/network/net_interceptor.dart';
+export 'src/network/default/default_net_client.dart';
 
 //// ========================== 生成器相关 ==========================
 export 'src/generate/annotations.dart';

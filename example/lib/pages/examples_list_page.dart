@@ -126,8 +126,8 @@ class _ExamplesListPageState extends State<ExamplesListPage> {
             ],
           ),
           _card(
-            title: '案例4：Upload API',
-            subtitle: 'ContentType.formData + @Part',
+            title: '案例4：Upload API（自定义 Client）',
+            subtitle: '@NetApi(client: \'upload\')，自定义 UploadNetClient 实现 INetClient，main 中 setClient(\'upload\', UploadNetClient(dio))；ContentType.formData + @Part',
             children: [
               _btn('upload(file, name)', () => _run('upload', () async {
                 final f = File('${Directory.systemTemp.path}/net_kit_demo_upload.txt');

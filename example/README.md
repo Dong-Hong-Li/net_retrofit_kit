@@ -29,11 +29,11 @@ flutter run
 | 1 基础 API | `server/demo_server.dart` | `@Get` / `@Post`、`@Body`、`@StreamResponse`、流式 `getStreamLines` |
 | 2 User API | `server/user_api.dart` | `@QueryKey`、`@Path`、`@Header`、`@Query()` Map |
 | 3 Article API | `server/article_api.dart` | `@Post` `@Body`、`@Put`、`@Delete` + `@Path('id')` |
-| 4 Upload API | `server/upload_api.dart` | `ContentType.formData` + `@Part('file')` / `@Part('name')` |
+| 4 Upload API（自定义 Client） | `server/upload_api.dart`、`network/upload_net_client.dart` | `@NetApi(client: 'upload')`；自定义类 `UploadNetClient` 实现 `INetClient`（独立 Dio、自定义请求头等），main 中 `NetRequest.setClient('upload', UploadNetClient(dio))`；`ContentType.formData` + `@Part` |
 | 5 Nested API | `server/nested_api.dart` | `@DataPath('result')` 从 `data[path]` 解析 |
 
 - **目录结构**：`lib/main.dart` 入口；`lib/pages/` 页面（全部案例、流式请求）；`lib/server/` API 定义与模型。
-- **main.dart**：设置 `NetRequest.options`（baseUrl: https://httpbin.org），首页保留快速体验按钮与「全部案例」入口。
+- **main.dart**：设置 `NetRequest.options`（默认 Client）；并注册**自定义** upload Client：`NetRequest.setClient('upload', UploadNetClient(uploadDio))`。`UploadNetClient` 在 `lib/network/upload_net_client.dart` 中实现 `INetClient`，供 `UploadApi`（`@NetApi(client: 'upload')`）使用。
 - **流式请求**：在案例 1 中进入「流式 getStreamLines」或首页「流式请求示例」，请求 `httpbin.org/stream/3`，演示 [CancelToken] 与按行消费。
 
 ## 代码生成

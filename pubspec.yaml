@@ -1,8 +1,16 @@
 name: net_retrofit_kit
-description: "Retrofit 风格网络注解与生成契约，极致定制化（Client/Response/Execute 可配置）"
+description: "基于 Dio 的声明式 HTTP 客户端：用注解定义 API 接口并自动生成实现，少写样板代码，支持多 Client、自定义响应解析与统一错误处理，便于接入现有项目。"
 version: 0.1.0
-publish_to: 'none'
-
+repository: https://github.com/Dong-Hong-Li/net_retrofit_kit
+homepage: https://github.com/Dong-Hong-Li/net_retrofit_kit
+documentation: https://github.com/Dong-Hong-Li/net_retrofit_kit#readme
+topics:
+  - flutter
+  - networking
+  - retrofit
+  - code-generation
+  - dio
+  - annotations
 environment:
   sdk: ">=3.0.0 <4.0.0"
 

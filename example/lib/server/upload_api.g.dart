@@ -14,6 +14,7 @@ class UploadApiImpl implements UploadApi {
       method: HttpMethod.post,
       body: FormData.fromMap(
           {'file': MultipartFile.fromFileSync(file.path), 'name': name}),
+      clientKey: 'upload',
       parser: (json) => json as Map<String, dynamic>,
     );
     return response.data;

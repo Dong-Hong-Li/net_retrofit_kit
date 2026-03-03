@@ -1,1 +1,26 @@
+# OS
 .DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# Dart / Flutter
+.dart_tool/
+.pub-cache/
+.pub/
+build/
+*.freezed.dart
+
+# 测试/覆盖率
+coverage/
+*.lcov
+
+# 环境/本地
+.env
+.env.*
+!.env.example

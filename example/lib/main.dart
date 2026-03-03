@@ -1,18 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:net_retrofit_kit/net_retrofit_kit.dart';
+import 'package:net_retrofit_kit_example/network/upload_net_client.dart';
 import 'package:net_retrofit_kit_example/server/demo_server.dart';
 import 'package:net_retrofit_kit_example/pages/examples_list_page.dart';
 import 'package:net_retrofit_kit_example/pages/stream_request_page.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  // 启动时注入配置（必须在使用 NetRequest 前调用）
+  // 默认 Client：业务 API（必须在使用 NetRequest 前调用）
   NetRequest.options = const NetOptions(
     baseUrl: 'https://httpbin.org',
     connectTimeout: Duration(seconds: 15),
     receiveTimeout: Duration(seconds: 15),
     sendTimeout: Duration(seconds: 15),
   );
+  // 多 Client：注册自定义 upload Client（实现 INetClient，独立 Dio、超时与自定义逻辑）
+  final uploadDio = NetRequest.createDio(const NetOptions(
+    baseUrl: 'https://httpbin.org',
+    connectTimeout: Duration(seconds: 15),
+    receiveTimeout: Duration(seconds: 60),
+    sendTimeout: Duration(seconds: 60),
+  ));
+  NetRequest.setClient('upload', UploadNetClient(uploadDio));
   runApp(const MyApp());
 }
 
