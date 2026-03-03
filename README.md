@@ -55,7 +55,7 @@ abstract class UserApi {
 
 | Annotation | Use |
 |------------|-----|
-| `@NetApi()` | On abstract class. Optional: `client: 'upload'` for named client. |
+| `@NetApi()` | On abstract class. Optional `client: 'upload'` for named client; else uses [NetRequest.defaultKey](doc/04-multi-client.md). |
 | `@Get(path)` `@Post(path)` `@Put(path)` `@Delete(path)` | HTTP method + path. |
 | `@Body()` | Request body. |
 | `@Query()` | Full query map. `@QueryKey('name')` = single query param. |

@@ -3,12 +3,11 @@ import 'package:net_retrofit_kit/src/network/net_content_type.dart';
 import 'package:net_retrofit_kit/src/network/http_constant.dart';
 import 'package:net_retrofit_kit/src/network/http_method.dart';
 
-/// 网络客户端抽象，便于单测注入 Mock 或替换实现。
-/// 普通请求与 Stream/SSE 请求均通过同一接口抽象，保证可替换性一致。
+/// 普通 HTTP 客户端抽象，便于单测注入 Mock 或替换实现。
 ///
 /// 设计对齐 Retrofit：Query 用 [queryParameters]，Body 用 [body]，由调用方（生成器）按注解区分。
 ///
-/// 流式请求（SSE、Stream）不在此接口内，由调用方基于 [NetRequest.dio] 自行发起并维护 stream/取消逻辑。
+/// 流式请求（SSE、Stream）不在此接口内，使用独立的 `IStreamNetClient` 抽象。
 abstract class INetClient {
   /// 通用 HTTP 请求。
   ///

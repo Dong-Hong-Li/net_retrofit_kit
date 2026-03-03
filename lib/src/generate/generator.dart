@@ -138,7 +138,7 @@ class NetRetrofitGenerator extends GeneratorForAnnotation<NetApi> {
     return 'contentType: ContentType.${config.contentType!.name}';
   }
 
-  /// 生成 clientKey 表达式（仅当非 null 时）
+  /// 生成 clientKey 表达式；null 时不传，由 NetRequest.defaultKey 规则解析。
   String? _buildClientKey(MethodGeneratorConfig config) {
     if (config.clientKey == null) return null;
     return "clientKey: '${config.clientKey}'";
@@ -269,6 +269,8 @@ class NetRetrofitGenerator extends GeneratorForAnnotation<NetApi> {
     buffer.writeln('      method: ${config.method},');
     final q = _buildQueryParameters(config);
     if (q != null) buffer.writeln('      $q,');
+    final clientKey = _buildClientKey(config);
+    if (clientKey != null) buffer.writeln('      $clientKey,');
     if (_hasCancelTokenParameter(method)) {
       buffer.writeln('      cancelToken: cancelToken,');
     }

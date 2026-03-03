@@ -38,7 +38,7 @@ flutter run
 
 ## 代码生成
 
-- 所有带 `@NetApi()` 的抽象类由 `net_retrofit_kit` 的生成器生成实现类（`XxxImpl`），输出到同名的 `.g.dart`。
+- 所有带 `@NetApi(client: ...)` 的抽象类由 `net_retrofit_kit` 的生成器生成实现类（`XxxImpl`），输出到同名的 `.g.dart`；client 必填。
 - 修改 `server/*.dart` 中接口或注解后，需重新执行：  
   `dart run build_runner build --delete-conflicting-outputs`。
 

@@ -1,12 +1,11 @@
-import 'dart:convert';
-import 'package:dio/dio.dart';
-import 'package:net_retrofit_kit/src/network/net_content_type.dart';
-import 'package:net_retrofit_kit/src/network/http_constant.dart';
-import 'package:net_retrofit_kit/src/network/http_error.dart';
-import 'package:net_retrofit_kit/src/network/http_method.dart';
-import 'package:net_retrofit_kit/src/network/inet_client.dart';
+// 示例工程内自维护的默认 [INetClient] 实现（插件内不再提供 DefaultNetClient，业务需自行实现或拷贝本类）。
 
-/// 基于 Dio 的默认 [INetClient] 实现，供 [NetRequest] 在未注入具名 client 时使用。
+import 'dart:convert';
+
+import 'package:dio/dio.dart';
+import 'package:net_retrofit_kit/net_retrofit_kit.dart';
+
+/// 基于 Dio 的默认 [INetClient] 实现，供示例中 default client 使用。
 class DefaultNetClient implements INetClient {
   DefaultNetClient(this._dio);
 

@@ -56,7 +56,7 @@ final uploadDio = NetRequest.createDio(const NetOptions(
   baseUrl: 'https://upload.example.com',
   receiveTimeout: Duration(seconds: 120),
 ));
-NetRequest.setClient('upload', DefaultNetClient(uploadDio));
+NetRequest.setClient('upload', YourNetClient(uploadDio));  // implement INetClient yourself; example app has a reference
 ```
 
 ---

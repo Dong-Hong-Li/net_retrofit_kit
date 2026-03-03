@@ -55,7 +55,7 @@ abstract class UserApi {
 
 | 注解 | 用途 |
 |------|------|
-| `@NetApi()` | 标在抽象类上。可选 `client: 'upload'` 使用具名 Client。 |
+| `@NetApi()` | 标在抽象类上。可选 `client: 'upload'` 使用具名 Client；否则走 [NetRequest.defaultKey](doc/04-多Client.md)。 |
 | `@Get(path)` `@Post(path)` `@Put(path)` `@Delete(path)` | HTTP 方法 + 路径。 |
 | `@Body()` | 请求体。 |
 | `@Query()` | 完整 query map。`@QueryKey('name')` 单个 query 参数。 |

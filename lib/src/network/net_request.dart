@@ -1,21 +1,26 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:net_retrofit_kit/src/network/net_content_type.dart';
-import 'package:net_retrofit_kit/src/network/default/default_net_client.dart';
 import 'package:net_retrofit_kit/src/network/http_constant.dart';
 import 'package:net_retrofit_kit/src/network/http_logging_interceptor.dart';
 import 'package:net_retrofit_kit/src/network/http_method.dart';
 import 'package:net_retrofit_kit/src/network/inet_client.dart';
+import 'package:net_retrofit_kit/src/network/istream_net_client.dart';
 import 'package:net_retrofit_kit/src/network/net_options.dart';
 
 class NetRequest {
   static Dio? _dio;
   static final Map<String, INetClient> _clients = {};
+  static final Map<String, IStreamNetClient> _streamClients = {};
 
-  /// 默认 Client 的 key，未传 [clientKey] 时使用。
+  /// 默认 Client 的 key 常量，常用作 [defaultKey] 的初始值。
   static const String defaultClientKey = 'default';
 
-  /// 注入默认 [INetClient] 实现，等价于 [setClient]([defaultClientKey], client)。单测时可替换为 Mock。
+  /// 未传 [clientKey] 时使用的默认 client 名称；可指定，如 `NetRequest.defaultKey = 'upload'`。
+  /// 规则：未传 clientKey 时，若只注册了一个 client 则用该 client，否则用 [defaultKey]。
+  static String defaultKey = defaultClientKey;
+
+  /// 注入名为 [defaultClientKey] 的 [INetClient]，等价于 [setClient]([defaultClientKey], client)。单测时可替换为 Mock。
   static set client(INetClient? c) {
     setClient(defaultClientKey, c);
   }
@@ -31,9 +36,42 @@ class NetRequest {
     }
   }
 
-  /// 获取已注册的 [INetClient]。[name] 为空时使用 [defaultClientKey]。
-  static INetClient? getClient([String? name]) =>
-      _clients[name ?? defaultClientKey];
+  /// 解析「未显式传 clientKey」时使用的 key：仅注册一个时用该 key，多个时用 [defaultKey]。
+  static String? _resolveClientKey(String? key) {
+    if (key != null && key.isNotEmpty) return key;
+    if (_clients.isEmpty) return null;
+    if (_clients.length == 1) return _clients.keys.single;
+    return defaultKey;
+  }
+
+  /// 获取已注册的 [INetClient]。[name] 为空时按 [defaultKey] 规则解析（见 [requestHttp]）。
+  static INetClient? getClient([String? name]) {
+    final k = _resolveClientKey(name);
+    return k != null ? _clients[k] : null;
+  }
+
+  /// 按名称注册或移除 [IStreamNetClient]。与 [setClient] 分离，避免普通 client 混入流式能力。
+  static void setStreamClient(String name, IStreamNetClient? client) {
+    if (client == null) {
+      _streamClients.remove(name);
+    } else {
+      _streamClients[name] = client;
+    }
+  }
+
+  /// 解析「未显式传 stream clientKey」时使用的 key：仅注册一个时用该 key，多个时用 [defaultKey]。
+  static String? _resolveStreamClientKey(String? key) {
+    if (key != null && key.isNotEmpty) return key;
+    if (_streamClients.isEmpty) return null;
+    if (_streamClients.length == 1) return _streamClients.keys.single;
+    return defaultKey;
+  }
+
+  /// 获取已注册的 [IStreamNetClient]。[name] 为空时按 [defaultKey] 规则解析（见 [requestStreamResponse]）。
+  static IStreamNetClient? getStreamClient([String? name]) {
+    final k = _resolveStreamClientKey(name);
+    return k != null ? _streamClients[k] : null;
+  }
 
   static NetOptions? _options;
 
@@ -102,9 +140,7 @@ class NetRequest {
     return dio;
   }
 
-  static DefaultNetClient _defaultClient() => DefaultNetClient(_dioInstance);
-
-  /// 底层 Dio 实例，用于流式请求（SSE、Stream）等需自行维护的场景。
+  /// 底层 Dio 实例，用于流式请求（SSE、Stream）等场景的回退实现。
   ///
   /// 流式请求不通过 [requestHttp]，可选用 [requestStreamResponse] 或直接使用 [dio] 发起。
   static Dio get dio => _dioInstance;
@@ -114,7 +150,55 @@ class NetRequest {
   /// 供生成器生成「返回 Stream 的方法」：先 await [requestStreamResponse]，再返回 `response.data?.stream`；
   /// 若为 SSE，可用 [SseStreamParser.parse](response.data!.stream) 得到 `Stream<String>`。
   /// 调用方负责：消费 stream、[cancelToken] 取消、异常与关闭。
+  ///
+  /// - [clientKey] 可选：按 [defaultKey] 规则解析已注册的 stream client（见 [setStreamClient]）。
+  /// - 若未命中可用的 stream client，则回退使用 [dio] 发起流式请求。
   static Future<Response> requestStreamResponse({
+    required String url,
+    required HttpMethod method,
+    Map<String, dynamic>? queryParameters,
+    dynamic body,
+    ContentType contentType = ContentType.json,
+    Map<String, dynamic>? headers,
+    Map<String, dynamic>? extra,
+    bool enableLogging = false,
+    String? clientKey,
+    CancelToken? cancelToken,
+  }) async {
+    final resolvedKey = _resolveStreamClientKey(clientKey);
+    if (resolvedKey != null) {
+      final streamClient = _streamClients[resolvedKey];
+      if (streamClient == null) {
+        throw StateError(
+            '未注册 stream client: "$resolvedKey"，请先调用 NetRequest.setStreamClient("$resolvedKey", yourClient)。');
+      }
+      return streamClient.requestStreamResponse(
+        url: url,
+        method: method,
+        queryParameters: queryParameters,
+        body: body,
+        contentType: contentType,
+        headers: headers,
+        extra: extra,
+        enableLogging: enableLogging,
+        cancelToken: cancelToken,
+      );
+    }
+    return _requestStreamWithDio(
+      url: url,
+      method: method,
+      queryParameters: queryParameters,
+      body: body,
+      contentType: contentType,
+      headers: headers,
+      extra: extra,
+      enableLogging: enableLogging,
+      cancelToken: cancelToken,
+    );
+  }
+
+  /// 默认流式请求实现，使用 Dio 发起请求
+  static Future<Response> _requestStreamWithDio({
     required String url,
     required HttpMethod method,
     Map<String, dynamic>? queryParameters,
@@ -166,7 +250,7 @@ class NetRequest {
 
   /// 通用请求入口（设计对齐 Retrofit：Query 用 [queryParameters]，Body 用 [body]）。
   /// 成功约定：HTTP 2xx 且 response.code == [BusinessCode.success] 时返回 [BaseResponse]；否则抛 [ApiError]。
-  /// [clientKey] 指定具名 client，为空则用 [defaultClientKey]；未注册时走包内默认实现。
+  /// [clientKey] 可选：不传时，若只注册了一个 client 则用该 client，否则用 [defaultKey]（可指定）；未注册时抛 [StateError]。
   /// [cancelToken] 可选，页面 dispose 时取消可避免「页面已关仍回调」。
   static Future<BaseResponse<T>> requestHttp<T>({
     required String url,
@@ -181,22 +265,16 @@ class NetRequest {
     CancelToken? cancelToken,
     DataParser<T>? parser,
   }) async {
-    final client = getClient(clientKey);
-    if (client != null) {
-      return client.requestHttp<T>(
-        url: url,
-        method: method,
-        queryParameters: queryParameters,
-        body: body,
-        contentType: contentType,
-        headers: headers,
-        extra: extra,
-        enableLogging: enableLogging,
-        cancelToken: cancelToken,
-        parser: parser,
+    final resolvedKey = _resolveClientKey(clientKey);
+    final client = resolvedKey != null ? _clients[resolvedKey] : null;
+    if (client == null) {
+      throw StateError(
+        resolvedKey == null
+            ? '未注册任何 client，请先调用 NetRequest.setClient(name, yourClient)。'
+            : '未注册 client: "$resolvedKey"，请先调用 NetRequest.setClient("$resolvedKey", yourClient)。',
       );
     }
-    return _defaultClient().requestHttp<T>(
+    return client.requestHttp<T>(
       url: url,
       method: method,
       queryParameters: queryParameters,

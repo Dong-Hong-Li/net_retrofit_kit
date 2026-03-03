@@ -4,7 +4,7 @@
 
 | Annotation | Scope | Use |
 |------------|--------|-----|
-| `@NetApi(client?, responseType?, unwrapSuccess?)` | Class | Optional client key, response type, return data only on success |
+| `@NetApi(client?, responseType?, unwrapSuccess?)` | Class | Optional client; when omitted uses [NetRequest.defaultKey](04-multi-client.md#defaultkey); optional response type, return data only on success |
 | `@Get(path)` `@Post(path)` `@Put(path)` `@Delete(path)` | Method | HTTP method + path; optional `contentType: ContentType.formData` |
 | `@Body()` | Param | Request body |
 | `@Query()` | Param | Full query map |

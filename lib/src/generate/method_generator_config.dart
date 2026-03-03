@@ -40,7 +40,7 @@ class MethodGeneratorConfig {
 
   // ========================== 来自 @NetApi ==========================
 
-  /// 对应 [NetApi.client]，即 requestHttp 的 [clientKey]；null 表示 default。
+  /// 对应 [NetApi.client]，即 requestHttp 的 [clientKey]；null 时生成代码不传 clientKey，由 [NetRequest.defaultKey] 规则解析。
   final String? clientKey;
 
   // ========================== 来自 @StreamResponse ==========================
@@ -100,6 +100,7 @@ class MethodGeneratorConfig {
     final unwrapSuccess =
         netApiAnnotation.peek('unwrapSuccess')?.boolValue ?? true;
     final clientKey = netApiAnnotation.peek('client')?.stringValue;
+    final effectiveClientKey = (clientKey != null && clientKey.isNotEmpty) ? clientKey : null;
 
     String path = '';
     HttpMethod httpMethod = HttpMethod.get;
@@ -192,7 +193,7 @@ class MethodGeneratorConfig {
       path: path,
       method: httpMethod,
       contentType: contentType,
-      clientKey: clientKey,
+      clientKey: effectiveClientKey,
       stream: stream,
       queryParam: queryParam,
       queryKeyParams: queryKeyParams,

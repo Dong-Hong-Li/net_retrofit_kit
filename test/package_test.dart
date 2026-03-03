@@ -8,6 +8,13 @@ void main() {
       expect(NetRequest.defaultClientKey, equals('default'));
     });
 
+    test('defaultKey is assignable and defaults to defaultClientKey', () {
+      final prev = NetRequest.defaultKey;
+      NetRequest.defaultKey = 'upload';
+      expect(NetRequest.defaultKey, equals('upload'));
+      NetRequest.defaultKey = prev;
+    });
+
     test('options getter returns value after set', () {
       const opts = NetOptions(baseUrl: 'https://example.com');
       NetRequest.options = opts;
@@ -47,7 +54,8 @@ void main() {
       expect(a.responseType, 'BaseResponse');
       expect(a.unwrapSuccess, isTrue);
 
-      const b = NetApi(client: 'upload', responseType: 'CustomResp', unwrapSuccess: false);
+      const b = NetApi(
+          client: 'upload', responseType: 'CustomResp', unwrapSuccess: false);
       expect(b.client, 'upload');
       expect(b.responseType, 'CustomResp');
       expect(b.unwrapSuccess, isFalse);
@@ -55,7 +63,8 @@ void main() {
 
     test('Http method annotations', () {
       expect(const Get('/x').path, '/x');
-      expect(const Get('/y', contentType: ContentType.formData).contentType, ContentType.formData);
+      expect(const Get('/y', contentType: ContentType.formData).contentType,
+          ContentType.formData);
       expect(const Post('/p').path, '/p');
       expect(const Put('/u').path, '/u');
       expect(const Delete('/d').path, '/d');
@@ -92,7 +101,8 @@ void main() {
     test('toStringType', () {
       expect(ContentType.json.toStringType(), 'application/json');
       expect(ContentType.formData.toStringType(), 'multipart/form-data');
-      expect(ContentType.xWwwFormUrlencoded.toStringType(), 'application/x-www-form-urlencoded');
+      expect(ContentType.xWwwFormUrlencoded.toStringType(),
+          'application/x-www-form-urlencoded');
     });
   });
 
@@ -134,7 +144,8 @@ void main() {
     });
 
     test('businessReject', () {
-      final e = ApiError.businessReject(code: 1001, message: 'denied', data: null);
+      final e =
+          ApiError.businessReject(code: 1001, message: 'denied', data: null);
       expect(e.kind, ApiErrorKind.businessReject);
       expect(e.code, 1001);
       expect(e.message, 'denied');
@@ -143,7 +154,8 @@ void main() {
 
   group('BaseResponse', () {
     test('isSuccess when code == BusinessCode.success', () {
-      final r = BaseResponse<int>(code: BusinessCode.success, msg: 'ok', data: 1);
+      final r =
+          BaseResponse<int>(code: BusinessCode.success, msg: 'ok', data: 1);
       expect(r.isSuccess, isTrue);
       expect(r.data, 1);
     });

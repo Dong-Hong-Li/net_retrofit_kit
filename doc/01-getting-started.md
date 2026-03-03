@@ -1,6 +1,6 @@
 # Getting started
 
-**Quick:** Add dependency → set `NetRequest.options` in `main()` → define `@NetApi()` abstract class → run build_runner → use `XxxImpl()`.
+**Quick:** Add dependency → set `NetRequest.options` in `main()` → register at least one client (implement [INetClient](04-multi-client.md); example app has a copyable default implementation) → define `@NetApi()` abstract class → run build_runner → use `XxxImpl()`.
 
 ---
 
@@ -39,7 +39,7 @@ Must run before any request.
 
 ## 3. Define API
 
-- Abstract class + `@NetApi()`.
+- Abstract class + `@NetApi()` (optional `client: 'upload'`; else uses [NetRequest.defaultKey](04-multi-client.md#defaultkey)).
 - Methods: `@Get(path)`, `@Post(path)`, etc.
 - Params: `@Body()`, `@QueryKey('name')`, `@Path('id')`, `@Header('name')` as needed.
 - Return: `Future<T?>` (T with `fromJson`) or `Future<bool?>`.

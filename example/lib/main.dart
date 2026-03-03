@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:net_retrofit_kit/net_retrofit_kit.dart';
+import 'package:net_retrofit_kit_example/network/default_net_client.dart';
 import 'package:net_retrofit_kit_example/network/upload_net_client.dart';
 import 'package:net_retrofit_kit_example/server/demo_server.dart';
 import 'package:net_retrofit_kit_example/pages/examples_list_page.dart';
@@ -13,6 +14,10 @@ void main() {
     connectTimeout: Duration(seconds: 15),
     receiveTimeout: Duration(seconds: 15),
     sendTimeout: Duration(seconds: 15),
+  );
+  NetRequest.setClient(
+    NetRequest.defaultClientKey,
+    DefaultNetClient(NetRequest.createDio(NetRequest.options)),
   );
   // 多 Client：注册自定义 upload Client（实现 INetClient，独立 Dio、超时与自定义逻辑）
   final uploadDio = NetRequest.createDio(const NetOptions(

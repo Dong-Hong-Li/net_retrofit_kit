@@ -11,7 +11,7 @@ import 'package:net_retrofit_kit/src/network/net_content_type.dart';
 ///
 /// 生成器为该类生成实现类，并调用 [NetRequest.requestHttp]（或 [INetClient.requestHttp]）。
 /// 参数对应关系：
-/// - [client] → requestHttp 的 [clientKey]，为 null 时用 [NetRequest.defaultClientKey]
+/// - [client] → requestHttp 的 [clientKey]；不传时等价于使用 [NetRequest.defaultKey]（仅注册一个 client 时用该 client，多个时用 defaultKey，defaultKey 可指定）。
 /// - [responseType] → 解析时使用的响应类型名（如 BaseResponse）
 /// - [unwrapSuccess] → 成功时返回 response.data（true）还是整份 response（false）
 class NetApi {
@@ -21,7 +21,7 @@ class NetApi {
     this.unwrapSuccess = true,
   });
 
-  /// 对应 [NetRequest.requestHttp] 的 [clientKey]，null 表示 default
+  /// 对应 [NetRequest.requestHttp] 的 [clientKey]；null 时使用 [NetRequest.defaultKey] 规则。
   final String? client;
 
   /// 统一响应类型名
