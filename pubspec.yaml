@@ -1,0 +1,20 @@
+name: net_retrofit_kit
+description: "Retrofit 风格网络注解与生成契约，极致定制化（Client/Response/Execute 可配置）"
+version: 0.1.0
+publish_to: 'none'
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  dio: ">=5.0.0 < 5.9.1"
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ">=5.0.0 <7.0.0"
+  source_gen: ">=4.2.0 <5.0.0"
+  build_runner: ">=2.4.15 <3.0.0" 

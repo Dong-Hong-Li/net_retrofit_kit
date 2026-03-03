@@ -1,0 +1,25 @@
+name: net_retrofit_kit_example
+description: 可运行的示例应用，演示 net_retrofit_kit 的配置与请求。
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  dio: ^5.0.0
+  net_retrofit_kit:
+    path: ..
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  build_runner: ^2.4.0
+  build: any
+  source_gen: ^4.2.0
+
+flutter:
+  uses-material-design: true

@@ -1,0 +1,11 @@
+# net_retrofit_kit 代码生成：为带 @NetApi 的抽象类生成实现类（.g.dart）
+# 依赖方在 example 或业务项目中执行: dart run build_runner build --delete-conflicting-outputs
+
+builders:
+  net_retrofit_kit:
+    import: "package:net_retrofit_kit/src/generate/build.dart"
+    builder_factories: ["netRetrofitBuilder"]
+    build_extensions: {".dart": [".net_retrofit_kit.g.part"]}
+    applies_builders: ["source_gen|combining_builder"]
+    build_to: cache
+    auto_apply: dependents
