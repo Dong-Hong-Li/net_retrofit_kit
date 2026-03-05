@@ -161,7 +161,7 @@ void main() {
     });
 
     test('isSuccess when code != success', () {
-      final r = BaseResponse<int>(code: 1, msg: 'err', data: null);
+      final r = BaseResponse<int?>(code: 1, msg: 'err', data: null);
       expect(r.isSuccess, isFalse);
     });
 

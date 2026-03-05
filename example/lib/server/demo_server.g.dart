@@ -47,7 +47,7 @@ class DemoServerImpl implements DemoServer {
       body: body,
       parser: (json) => json as bool,
     );
-    return response.data ?? false;
+    return response.data;
   }
 
   @override

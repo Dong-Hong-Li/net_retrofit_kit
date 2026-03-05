@@ -14,7 +14,7 @@ class ResponseTypeApiImpl implements ResponseTypeApi {
       method: HttpMethod.get,
       parser: (json) => json as String,
     );
-    return response.data ?? '';
+    return response.data;
   }
 
   @override
@@ -24,6 +24,6 @@ class ResponseTypeApiImpl implements ResponseTypeApi {
       method: HttpMethod.post,
       parser: (json) => json as String,
     );
-    return response.data ?? '';
+    return response.data;
   }
 }

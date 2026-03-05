@@ -36,6 +36,6 @@ class ArticleApiImpl implements ArticleApi {
       method: HttpMethod.delete,
       parser: (json) => json as bool,
     );
-    return response.data ?? false;
+    return response.data;
   }
 }

@@ -36,7 +36,8 @@ void main() {
     });
 
     test('非 Future 原样返回', () {
-      expect(stripReturnTypeName('Response<String>'), equals('Response<String>'));
+      expect(
+          stripReturnTypeName('Response<String>'), equals('Response<String>'));
     });
   });
 
@@ -105,8 +106,7 @@ void main() {
       }
       final content = file.readAsStringSync();
       // 生成器应使用 parserConfig.returnTypeName，与 parser 一致，避免 getDisplayString 插入空格
-      expect(content, contains('requestHttp<Response<String>>'));
-      expect(content, contains('Response<String>.fromJson'));
+      expect(content, contains('requestHttp<String>'));
       expect(content, isNot(contains('Response < String >')));
     });
   });

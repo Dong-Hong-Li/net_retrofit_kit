@@ -5,7 +5,7 @@ typedef DataParser<T> = T Function(Object? json);
 class BaseResponse<T> {
   final int code;
   final String msg;
-  final T? data;
+  final T data;
   final int total;
 
   BaseResponse({
@@ -48,7 +48,7 @@ class BaseResponse<T> {
               ? (json['code'] as num).toInt()
               : -1,
       msg: msgValue is String ? msgValue : msgValue.toString(),
-      data: data,
+      data: data as T,
       total: (json['total'] is int)
           ? json['total'] as int
           : (json['total'] is num)

@@ -169,38 +169,8 @@ class NetRetrofitGenerator extends GeneratorForAnnotation<NetApi> {
     return rt.getDisplayString();
   }
 
-  /// 返回类型是否为非空基本类型
-  bool _isNonNullablePrimitive(String typeArg) {
-    return typeArg == 'bool' ||
-        typeArg == 'int' ||
-        typeArg == 'double' ||
-        typeArg == 'String' ||
-        typeArg == 'num';
-  }
-
-  /// 非空基本类型的默认值，用于 response.data ?? default。
-  String _defaultValueForPrimitive(String typeArg) {
-    switch (typeArg) {
-      case 'bool':
-        return 'false';
-      case 'int':
-      case 'num':
-        return '0';
-      case 'double':
-        return '0.0';
-      case 'String':
-        return "''";
-      default:
-        return 'null';
-    }
-  }
-
-  /// 生成 return response.data 或 response.data ?? default（非空基本类型时）。
+  /// 生成 return response.data（类型由 BaseResponse<T>.data 的 T 保证）。
   String _buildReturnData(String typeArg) {
-    if (_isNonNullablePrimitive(typeArg)) {
-      final defaultVal = _defaultValueForPrimitive(typeArg);
-      return 'return response.data ?? $defaultVal;';
-    }
     return 'return response.data;';
   }
 
