@@ -8,6 +8,20 @@
 
 ---
 
+## [0.2.6](https://github.com/Dong-Hong-Li/net_retrofit_kit/releases/tag/v0.2.6) - 2026-03-05
+
+### Changed / 变更
+
+**English**
+
+- **`BaseResponse<T>`**: The `data` field is now `final T data` (aligned with the generic `T`). When `data` can be null, use `BaseResponse<T?>` (e.g. `BaseResponse<int?>`). This keeps the type consistent and avoids a separate nullable field type.
+
+**中文**
+
+- **`BaseResponse<T>`**：`data` 字段改为 `final T data`，与泛型 `T` 一致。当 `data` 可能为 null 时，请使用 `BaseResponse<T?>`（如 `BaseResponse<int?>`），类型更一致。
+
+---
+
 ## [0.2.5](https://github.com/Dong-Hong-Li/net_retrofit_kit/releases/tag/v0.2.5) - 2026-03-05
 
 ### Fixed / 修复
