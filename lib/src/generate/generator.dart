@@ -3,6 +3,7 @@ import 'package:analyzer/dart/element/type.dart';
 import 'package:build/build.dart';
 import 'package:net_retrofit_kit/src/generate/annotations.dart';
 import 'package:net_retrofit_kit/src/generate/method_generator_config.dart';
+import 'package:net_retrofit_kit/src/generate/parser_expression.dart';
 import 'package:source_gen/source_gen.dart';
 
 /// @Get / @Post / @Put / @Delete 的类名，用于判断方法是否带 HTTP 方法注解
@@ -153,21 +154,10 @@ class NetRetrofitGenerator extends GeneratorForAnnotation<NetApi> {
 
   /// 生成 parser 表达式（根据返回类型：fromJson 或 as 强转；@DataPath 时从 json[path] 解析）
   String _buildParser(MethodGeneratorConfig config) {
-    final T = config.parserConfig.returnTypeName;
-    final dataPath = config.parserConfig.dataPath;
-    const primitives = {'bool', 'int', 'double', 'String', 'num'};
-    final isPrimitive =
-        primitives.contains(T) || T.startsWith('Map<') || T.startsWith('List<');
-    if (dataPath != null) {
-      if (isPrimitive) {
-        return 'parser: (json) => (json as Map<String, dynamic>)["$dataPath"] as $T';
-      }
-      return 'parser: (json) => $T.fromJson((json as Map<String, dynamic>)["$dataPath"] as Map<String, dynamic>)';
-    }
-    if (isPrimitive) {
-      return 'parser: (json) => json as $T';
-    }
-    return 'parser: (json) => $T.fromJson(json as Map<String, dynamic>)';
+    return buildParserExpression(
+      config.parserConfig.returnTypeName,
+      config.parserConfig.dataPath,
+    );
   }
 
   /// 获取 requestHttp 的泛型 T（Future<> 中的 T） 即返回类型

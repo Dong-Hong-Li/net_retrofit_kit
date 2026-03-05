@@ -8,6 +8,24 @@
 
 ---
 
+## [0.2.3](https://github.com/Dong-Hong-Li/net_retrofit_kit/releases/tag/v0.2.3) - 2026-03-05
+
+### Fixed / 修复
+
+**English**
+
+- **Code generator**: When return type is generic (e.g. `Future<Response<String>>`), the analyzer’s `getDisplayString()` may add spaces (e.g. `Response < String >`). The generated parser was then `Response < String >.fromJson(...)`, which Dart parses as a comparison. Now generic type names are wrapped in parentheses so the output is `(Response<String>).fromJson(...)` and parses correctly.
+
+**中文**
+
+- **代码生成**：返回类型为泛型（如 `Future<Response<String>>`）时，analyzer 的 `getDisplayString()` 可能带空格（如 `Response < String >`），生成 `Response < String >.fromJson(...)` 会被解析成比较运算。现对泛型类型名加括号，生成 `(Response<String>).fromJson(...)`，解析正确。
+
+### Added / 新增
+
+- **Tests**: Added `test/generator_test.dart` for `buildParserExpression` (generic / non-generic / primitive / dataPath cases).
+
+---
+
 ## [0.2.2](https://github.com/Dong-Hong-Li/net_retrofit_kit/releases/tag/v0.2.2) - 2026-03-03
 
 ### Added / 新增
