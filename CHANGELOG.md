@@ -8,6 +8,34 @@
 
 ---
 
+## [0.2.5](https://github.com/Dong-Hong-Li/net_retrofit_kit/releases/tag/v0.2.5) - 2026-03-05
+
+### Fixed / 修复
+
+**English**
+
+- **Code generator — return type name source**: For non-stream methods, the generator now uses the same return type name for both `requestHttp<T>` and the parser expression. That name is built from the type tree (`InterfaceType.element.name` + type arguments) in `MethodGeneratorConfig._returnTypeNameFromType`, instead of `getDisplayString()`. This avoids analyzer-inserted spaces in generics (e.g. `Response < String >`) so that both the generated generic and the parser use a consistent, parseable type (e.g. `Response<String>`).
+
+**中文**
+
+- **代码生成 — 返回类型名来源**：非流式方法中，生成器对 `requestHttp<T>` 与 parser 表达式统一使用同一返回类型名。该名称在 `MethodGeneratorConfig._returnTypeNameFromType` 中由类型树（`InterfaceType.element.name` + 类型实参）拼接得到，不再使用 `getDisplayString()`，避免 analyzer 在泛型中插入空格（如 `Response < String >`），保证生成的泛型与 parser 类型一致且可正确解析（如 `Response<String>`）。
+
+### Added / 新增
+
+**English**
+
+- **`lib/src/generate/return_type_name.dart`**: New utility `stripReturnTypeName(display)` to extract the inner type from `Future<T>` / `Future<Stream<T>>` display strings. Handles analyzer output with spaces or a single trailing `>` so the closing `>` is not stripped incorrectly.
+- **Example**: `ResponseTypeApi` in `example/lib/server/response_type_api.dart` to demonstrate generic return types (e.g. `Future<Response<String>>`) and generated parser.
+- **Tests**: Unit tests for `stripReturnTypeName` (Future/Stream strip, nullable, edge cases) and a consistency check that `response_type_api.g.dart` generates `requestHttp<Response<String>>` and `Response<String>.fromJson` without spaces.
+
+**中文**
+
+- **`lib/src/generate/return_type_name.dart`**：新增工具函数 `stripReturnTypeName(display)`，从 `Future<T>` / `Future<Stream<T>>` 的显示字符串中提取内层类型 T；正确处理 analyzer 带空格或仅有一个闭合 `>` 的输出，避免误删泛型闭合。
+- **示例**：在 `example/lib/server/response_type_api.dart` 中新增 `ResponseTypeApi`，演示泛型返回类型（如 `Future<Response<String>>`）及生成 parser。
+- **测试**：为 `stripReturnTypeName` 增加单测（Future/Stream 剥离、可空、边界情况），并增加断言：`response_type_api.g.dart` 中生成 `requestHttp<Response<String>>` 与 `Response<String>.fromJson` 且无空格。
+
+---
+
 ## [0.2.3](https://github.com/Dong-Hong-Li/net_retrofit_kit/releases/tag/v0.2.3) - 2026-03-05
 
 ### Fixed / 修复

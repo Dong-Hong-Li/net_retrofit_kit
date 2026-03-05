@@ -9,7 +9,7 @@ part of 'article_api.dart';
 class ArticleApiImpl implements ArticleApi {
   @override
   Future<ArticleModel?> create(Map<String, dynamic> body) async {
-    final response = await NetRequest.requestHttp<ArticleModel?>(
+    final response = await NetRequest.requestHttp<ArticleModel>(
       url: '${NetRequest.options.baseUrl}/post',
       method: HttpMethod.post,
       body: body,
@@ -20,7 +20,7 @@ class ArticleApiImpl implements ArticleApi {
 
   @override
   Future<ArticleModel?> update(Map<String, dynamic> body) async {
-    final response = await NetRequest.requestHttp<ArticleModel?>(
+    final response = await NetRequest.requestHttp<ArticleModel>(
       url: '${NetRequest.options.baseUrl}/put',
       method: HttpMethod.put,
       body: body,

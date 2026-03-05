@@ -9,7 +9,7 @@ part of 'upload_api.dart';
 class UploadApiImpl implements UploadApi {
   @override
   Future<Map<String, dynamic>?> upload(File file, String name) async {
-    final response = await NetRequest.requestHttp<Map<String, dynamic>?>(
+    final response = await NetRequest.requestHttp<Map<String, dynamic>>(
       url: '${NetRequest.options.baseUrl}/post',
       method: HttpMethod.post,
       body: FormData.fromMap(

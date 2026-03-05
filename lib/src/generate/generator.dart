@@ -209,7 +209,10 @@ class NetRetrofitGenerator extends GeneratorForAnnotation<NetApi> {
       MethodElement method, MethodGeneratorConfig config) {
     final returnTypeStr = method.returnType.getDisplayString();
     final paramsStr = _methodParameters(method);
-    final typeArg = _responseTypeArgument(method);
+    // 非流式：与 parser 一致，使用 parserConfig.returnTypeName，避免 getDisplayString 在泛型中插入空格
+    final typeArg = config.stream
+        ? _responseTypeArgument(method)
+        : config.parserConfig.returnTypeName;
 
     if (config.stream) {
       return _generateStreamMethod(

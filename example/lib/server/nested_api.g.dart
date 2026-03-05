@@ -9,7 +9,7 @@ part of 'nested_api.dart';
 class NestedApiImpl implements NestedApi {
   @override
   Future<NestedModel?> getNested() async {
-    final response = await NetRequest.requestHttp<NestedModel?>(
+    final response = await NetRequest.requestHttp<NestedModel>(
       url: '${NetRequest.options.baseUrl}/get',
       method: HttpMethod.get,
       parser: (json) => NestedModel.fromJson(

@@ -9,7 +9,7 @@ part of 'user_api.dart';
 class UserApiImpl implements UserApi {
   @override
   Future<UserModel?> getList(int page, int size) async {
-    final response = await NetRequest.requestHttp<UserModel?>(
+    final response = await NetRequest.requestHttp<UserModel>(
       url: '${NetRequest.options.baseUrl}/get',
       method: HttpMethod.get,
       queryParameters: {'page': page, 'size': size},
@@ -20,7 +20,7 @@ class UserApiImpl implements UserApi {
 
   @override
   Future<UserModel?> getById(String id) async {
-    final response = await NetRequest.requestHttp<UserModel?>(
+    final response = await NetRequest.requestHttp<UserModel>(
       url: '${NetRequest.options.baseUrl}/anything/$id',
       method: HttpMethod.get,
       parser: (json) => UserModel.fromJson(json as Map<String, dynamic>),
@@ -30,7 +30,7 @@ class UserApiImpl implements UserApi {
 
   @override
   Future<UserModel?> getWithAuth(String token) async {
-    final response = await NetRequest.requestHttp<UserModel?>(
+    final response = await NetRequest.requestHttp<UserModel>(
       url: '${NetRequest.options.baseUrl}/get',
       method: HttpMethod.get,
       headers: {'Authorization': token},
@@ -41,7 +41,7 @@ class UserApiImpl implements UserApi {
 
   @override
   Future<UserModel?> getByQuery(Map<String, dynamic> query) async {
-    final response = await NetRequest.requestHttp<UserModel?>(
+    final response = await NetRequest.requestHttp<UserModel>(
       url: '${NetRequest.options.baseUrl}/get',
       method: HttpMethod.get,
       queryParameters: query,

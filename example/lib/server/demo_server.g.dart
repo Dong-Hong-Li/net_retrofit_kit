@@ -9,7 +9,7 @@ part of 'demo_server.dart';
 class DemoServerImpl implements DemoServer {
   @override
   Future<DemoModel?> login(Map<String, dynamic> body) async {
-    final response = await NetRequest.requestHttp<DemoModel?>(
+    final response = await NetRequest.requestHttp<DemoModel>(
       url: '${NetRequest.options.baseUrl}/post',
       method: HttpMethod.post,
       body: body,
@@ -20,7 +20,7 @@ class DemoServerImpl implements DemoServer {
 
   @override
   Future<DemoModel?> getUserInfo() async {
-    final response = await NetRequest.requestHttp<DemoModel?>(
+    final response = await NetRequest.requestHttp<DemoModel>(
       url: '${NetRequest.options.baseUrl}/get',
       method: HttpMethod.get,
       parser: (json) => DemoModel.fromJson(json as Map<String, dynamic>),
@@ -30,7 +30,7 @@ class DemoServerImpl implements DemoServer {
 
   @override
   Future<DemoModel?> googleLogin(Map<String, dynamic> body) async {
-    final response = await NetRequest.requestHttp<DemoModel?>(
+    final response = await NetRequest.requestHttp<DemoModel>(
       url: '${NetRequest.options.baseUrl}/post',
       method: HttpMethod.post,
       body: body,

@@ -2,6 +2,7 @@
 // 生成器根据本配置为每个带 @Get/@Post/@Put/@Delete 的抽象方法生成实现代码。
 
 import 'package:analyzer/dart/element/element.dart';
+import 'package:analyzer/dart/element/type.dart';
 import 'package:net_retrofit_kit/src/network/http_method.dart';
 import 'package:net_retrofit_kit/src/network/net_content_type.dart';
 import 'package:source_gen/source_gen.dart';
@@ -79,15 +80,21 @@ class MethodGeneratorConfig {
 
   static const _httpMethodNames = {'Get', 'Post', 'Put', 'Delete'};
 
-  /// 从 `Future<T>` / `Future<Stream<T>>` 等显示字符串中提取 T 的简短名称。
-  static String _stripReturnTypeName(String display) {
-    String s = display;
-    for (final prefix in ['Future<', 'Stream<']) {
-      if (s.startsWith(prefix)) s = s.substring(prefix.length);
-      if (s.endsWith('>')) s = s.substring(0, s.length - 1);
+  /// 用 [InterfaceType].element.name 与 typeArguments 拼接类型名，避免 [getDisplayString] 在尖括号旁插入空格。
+  static String _returnTypeNameFromType(DartType type) {
+    DartType t = type;
+    if (t is InterfaceType) {
+      final it = t;
+      final name = it.element.name ?? '';
+      if ((name == 'Future' || name == 'Stream') &&
+          it.typeArguments.length == 1) {
+        return _returnTypeNameFromType(it.typeArguments.first);
+      }
+      if (it.typeArguments.isEmpty) return name;
+      final args = it.typeArguments.map(_returnTypeNameFromType).join(', ');
+      return '$name<$args>';
     }
-    if (s.endsWith('?')) s = s.substring(0, s.length - 1);
-    return s;
+    return t.getDisplayString();
   }
 
   /// 从方法及其类上的 [NetApi] 注解生成 [MethodGeneratorConfig]。
@@ -100,7 +107,8 @@ class MethodGeneratorConfig {
     final unwrapSuccess =
         netApiAnnotation.peek('unwrapSuccess')?.boolValue ?? true;
     final clientKey = netApiAnnotation.peek('client')?.stringValue;
-    final effectiveClientKey = (clientKey != null && clientKey.isNotEmpty) ? clientKey : null;
+    final effectiveClientKey =
+        (clientKey != null && clientKey.isNotEmpty) ? clientKey : null;
 
     String path = '';
     HttpMethod httpMethod = HttpMethod.get;
@@ -186,8 +194,7 @@ class MethodGeneratorConfig {
       }
     }
 
-    final returnTypeStr = method.returnType.getDisplayString();
-    final returnTypeName = _stripReturnTypeName(returnTypeStr);
+    final returnTypeName = _returnTypeNameFromType(method.returnType);
 
     return MethodGeneratorConfig(
       path: path,

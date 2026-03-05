@@ -1,18 +1,54 @@
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:net_retrofit_kit/src/generate/parser_expression.dart';
+import 'package:net_retrofit_kit/src/generate/return_type_name.dart';
 
 void main() {
-  group('buildParserExpression', () {
-    test('泛型类型名带尖括号时用括号包裹，避免被解析成比较运算', () {
-      // 正常无空格
-      final a = buildParserExpression('Response<String>', null);
-      expect(a, contains('(Response<String>).fromJson'));
-      expect(a, isNot(contains('Response < String')));
+  group('stripReturnTypeName', () {
+    test('Future<Response<String>> 提取为 Response<String>', () {
+      expect(
+        stripReturnTypeName('Future<Response<String>>'),
+        equals('Response<String>'),
+      );
+    });
 
-      // 模拟 getDisplayString() 可能产生的带空格形式
+    test('analyzer 返回单 > 时保留泛型闭合，不误删', () {
+      // 模拟 getDisplayString 返回 Future<Response < String>（仅一个闭合 >）
+      expect(
+        stripReturnTypeName('Future<Response < String>'),
+        equals('Response < String>'),
+      );
+    });
+
+    test('带空格的双 > 提取正确', () {
+      expect(
+        stripReturnTypeName('Future<Response < String >>'),
+        equals('Response < String >'),
+      );
+    });
+
+    test('可空类型去掉 ?', () {
+      expect(
+        stripReturnTypeName('Future<Response<String>>?'),
+        equals('Response<String>'),
+      );
+    });
+
+    test('非 Future 原样返回', () {
+      expect(stripReturnTypeName('Response<String>'), equals('Response<String>'));
+    });
+  });
+
+  group('buildParserExpression', () {
+    test('无空格泛型直接 TypeName.fromJson，带空格泛型才加括号', () {
+      final a = buildParserExpression('Response<String>', null);
+      expect(a, contains('Response<String>.fromJson'));
+      expect(a, isNot(contains('(Response<String>)')));
+
       final b = buildParserExpression('Response < String >', null);
       expect(b, contains('(Response < String >).fromJson'));
-      expect(b, isNot(contains('Response < String >.fromJson'))); // 不能是未加括号的
+      expect(b, isNot(contains('Response < String >.fromJson')));
     });
 
     test('非泛型类型名不加括号', () {
@@ -42,9 +78,9 @@ void main() {
       );
     });
 
-    test('有 dataPath 时从 json[path] 解析，泛型仍加括号', () {
+    test('有 dataPath 时从 json[path] 解析', () {
       final a = buildParserExpression('Response<String>', 'data');
-      expect(a, contains('(Response<String>).fromJson'));
+      expect(a, contains('Response<String>.fromJson'));
       expect(a, contains('["data"]'));
 
       final b = buildParserExpression('Response < String >', 'result');
@@ -57,6 +93,21 @@ void main() {
       expect(a, equals('parser: (json) => json as Map<String, dynamic>'));
       final b = buildParserExpression('List<int>', null);
       expect(b, equals('parser: (json) => json as List<int>'));
+    });
+  });
+
+  group('泛型返回类型生成一致性', () {
+    test('response_type_api.g.dart 中 requestHttp 泛型与 parser 类型一致（无空格）', () {
+      final path = 'example/lib/server/response_type_api.g.dart';
+      final file = File(path);
+      if (!file.existsSync()) {
+        return; // 未生成时跳过
+      }
+      final content = file.readAsStringSync();
+      // 生成器应使用 parserConfig.returnTypeName，与 parser 一致，避免 getDisplayString 插入空格
+      expect(content, contains('requestHttp<Response<String>>'));
+      expect(content, contains('Response<String>.fromJson'));
+      expect(content, isNot(contains('Response < String >')));
     });
   });
 }
