@@ -1,13 +1,13 @@
 // ignore_for_file: deprecated_member_use
 
-// 示例工程内自维护的默认 [INetClient] 实现（插件内不再提供 DefaultNetClient，业务需自行实现或拷贝本类）。
+// Example app's own default [INetClient] implementation (package does not ship DefaultNetClient; copy or implement as needed).
 
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:net_retrofit_kit/net_retrofit_kit.dart';
 
-/// 基于 Dio 的默认 [INetClient] 实现，供示例中 default client 使用。
+/// Default [INetClient] implementation using Dio, used as the default client in the example.
 class DefaultNetClient implements INetClient {
   DefaultNetClient(this._dio);
 
@@ -76,7 +76,7 @@ class DefaultNetClient implements INetClient {
     dynamic data = body;
     if (contentType == ContentType.formData) {
       if (data is FormData) {
-        // 调用方已构建 FormData（如含 MultipartFile），直接使用
+        // Caller already built FormData (e.g. with MultipartFile), use as-is
       } else if (data is Map<String, dynamic>) {
         data = FormData.fromMap(data);
       }
@@ -114,7 +114,7 @@ class DefaultNetClient implements INetClient {
           cancelToken: cancelToken,
         );
       default:
-        throw UnsupportedError('不支持的请求方法: $method');
+        throw UnsupportedError('Unsupported request method: $method');
     }
   }
 

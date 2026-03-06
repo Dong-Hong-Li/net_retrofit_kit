@@ -1,19 +1,27 @@
-// 与 lib/src/network [INetClient.requestHttp] 契约一致，生成代码调用 NetRequest.requestHttp / client.requestHttp。
+// Aligned with the contract of lib/src/network [INetClient.requestHttp].
+// Generated code calls NetRequest.requestHttp / client.requestHttp.
 //
-// 参数对应：url=baseUrl+path, method, queryParameters, body, headers, contentType, clientKey, parser 均由注解/返回类型生成；
-// cancelToken：若方法有可选参数 CancelToken? cancelToken，生成器透传；extra / enableLogging 无注解，生成器可不传或默认。
+// Parameter mapping:
+// url=baseUrl+path, method, queryParameters, body, headers, contentType,
+// clientKey, and parser are generated from annotations and return type.
+// cancelToken is forwarded when a method defines optional
+// CancelToken? cancelToken; extra/enableLogging have no annotations.
 
 import 'package:net_retrofit_kit/src/network/net_content_type.dart';
 
-// ========================== 类级 ==========================
+// ========================== Class-level ==========================
 
-/// 标在抽象类上，声明 Retrofit 风格 API 接口。
+/// Applied to abstract classes to declare a Retrofit-style API interface.
 ///
-/// 生成器为该类生成实现类，并调用 [NetRequest.requestHttp]（或 [INetClient.requestHttp]）。
-/// 参数对应关系：
-/// - [client] → requestHttp 的 [clientKey]；不传时等价于使用 [NetRequest.defaultKey]（仅注册一个 client 时用该 client，多个时用 defaultKey，defaultKey 可指定）。
-/// - [responseType] → 解析时使用的响应类型名（如 BaseResponse）
-/// - [unwrapSuccess] → 成功时返回 response.data（true）还是整份 response（false）
+/// The generator creates an implementation and calls [NetRequest.requestHttp]
+/// (or [INetClient.requestHttp]).
+/// Parameter mapping:
+/// - [client] -> requestHttp [clientKey]. If omitted, [NetRequest.defaultKey]
+///   rules are used (single registered client -> use it, otherwise defaultKey).
+/// - [responseType] -> response wrapper type name used for parsing
+///   (for example `BaseResponse`).
+/// - [unwrapSuccess] -> return `response.data` when true, or full response when
+///   false.
 class NetApi {
   const NetApi({
     this.client,
@@ -21,83 +29,92 @@ class NetApi {
     this.unwrapSuccess = true,
   });
 
-  /// 对应 [NetRequest.requestHttp] 的 [clientKey]；null 时使用 [NetRequest.defaultKey] 规则。
+  /// Maps to [NetRequest.requestHttp] [clientKey].
+  /// Null means resolving by [NetRequest.defaultKey] rules.
   final String? client;
 
-  /// 统一响应类型名
+  /// Unified response wrapper type name.
   final String responseType;
 
-  /// 成功时只返回 data（true）还是整份 response（false）
+  /// Return data only (true) or full response (false) on success.
   final bool unwrapSuccess;
 }
 
-/// **与注解对应关系**（见 `lib/src/generate/annotations.dart`）：
-/// | 本接口参数 | 注解 / 约定 |
+/// **Annotation mapping** (see `lib/src/generate/annotations.dart`):
+/// | Interface parameter | Annotation / convention |
 /// |------------|-------------|
-/// | [url] | @Get/@Post/@Put/@Delete 的 path，与 baseUrl 拼接 |
-/// | [method] | @Get → get, @Post → post, @Put → put, @Delete → delete |
-/// | [queryParameters] | @Query() 参数整体 或 @QueryKey(name) 合并 |
-/// | [body] | @Body() 参数（toJson 或 Map） |
-/// | [contentType] | @Get(..., contentType: ...) 等，默认 json |
-/// | [headers] | @Header(name) 参数合并 |
-/// | [extra] | 无注解，生成器可不传 |
-/// | [enableLogging] | 无注解，生成器默认 false |
-/// | [cancelToken] | 方法可选参数 CancelToken? cancelToken 透传 |
-/// | [parser] | 返回类型 + @DataPath 生成 DataParser |
-/// | formData / 文件上传 | [contentType]=formData，[body] 为 FormData 或 Map（文件值用 MultipartFile）；注解可用 @Part(name) 多参拼 FormData |
+/// | [url] | path from @Get/@Post/@Put/@Delete, concatenated with baseUrl |
+/// | [method] | @Get -> get, @Post -> post, @Put -> put, @Delete -> delete |
+/// | [queryParameters] | full @Query() map, merged with @QueryKey(name) entries |
+/// | [body] | @Body() argument (toJson or Map) |
+/// | [contentType] | from annotations such as @Get(..., contentType: ...) |
+/// | [headers] | merged @Header(name) arguments |
+/// | [extra] | no annotation, generator may omit |
+/// | [enableLogging] | no annotation, generator defaults to false |
+/// | [cancelToken] | forwarded from optional CancelToken? cancelToken argument |
+/// | [parser] | generated from return type + @DataPath |
+/// | formData / file upload | [contentType]=formData, [body]=FormData/Map (file values use MultipartFile); @Part(name) can be merged into FormData |
 
-/// ========================== 方法级：HTTP 方法 + 路径 ==========================
+/// ========================== Method-level: HTTP method + path ==========================
 
-/// HTTP 方法注解基类，生成器据此取 [path] 拼 [url]、选 [HttpMethod]。
+/// Base annotation for HTTP methods.
+/// The generator uses [path] to build [url] and chooses [HttpMethod].
 abstract class HttpMethodAnnotation {
   const HttpMethodAnnotation(
     this.path, {
     this.contentType,
   });
 
-  /// 相对路径，与 baseUrl 拼接得到 [NetRequest.requestHttp] 的 [url]
+  /// Relative path. Concatenated with baseUrl to build [NetRequest.requestHttp]
+  /// [url].
   final String path;
 
-  /// 对应 [NetRequest.requestHttp] 的 [contentType]，null 表示默认 ContentType.json
+  /// Maps to [NetRequest.requestHttp] [contentType].
+  /// Null means default ContentType.json.
   final ContentType? contentType;
 }
 
-/// GET 请求 → method: HttpMethod.get, url: baseUrl + path
+/// GET request -> method: HttpMethod.get, url: baseUrl + path.
 class Get extends HttpMethodAnnotation {
   const Get(super.path, {super.contentType});
 }
 
-/// POST 请求 → method: HttpMethod.post, body 对应 requestHttp 的 [body]
+/// POST request -> method: HttpMethod.post, body maps to requestHttp [body].
 class Post extends HttpMethodAnnotation {
   const Post(super.path, {super.contentType});
 }
 
-/// PUT 请求
+/// PUT request.
 class Put extends HttpMethodAnnotation {
   const Put(super.path, {super.contentType});
 }
 
-/// DELETE 请求
+/// DELETE request.
 class Delete extends HttpMethodAnnotation {
   const Delete(super.path, {super.contentType});
 }
 
-// ========================== 方法级：响应解析 ==========================
+// ========================== Method-level: response parsing ==========================
 
-/// 从 response.data[path] 解析模型，而非 response.data。
+/// Parse model from response.data[path] instead of response.data.
 ///
-/// 生成器构造 [DataParser] 时使用 `response.data?[path]` 再传入 T.fromJson。
+/// The generator uses `response.data?[path]` when building [DataParser] before
+/// passing into T.fromJson.
 class DataPath {
   const DataPath(this.path);
   final String path;
 }
 
-/// 后端返回流（SSE/Stream）时使用：生成器应调用 [NetRequest.requestStreamResponse]，再按返回类型或约定返回 stream。
+/// Use for streaming backend responses (SSE/Stream): the generator should call
+/// [NetRequest.requestStreamResponse], then return stream based on return type
+/// or convention.
 ///
-/// 生成器根据方法返回类型决定实现，例如：
-/// - 返回 `Future<Stream<String>>`：可用 [SseStreamParser.parse](response.data!.stream)（SSE）或 utf8.decoder + LineSplitter（按行）；
-/// - 返回 `Future<Stream<List<int>>>`：直接返回 response.data?.stream。
-/// 生成器需将 [cancelToken] 等可选参数透传 [requestStreamResponse]，由调用方负责消费与取消。
+/// Typical generation strategy:
+/// - `Future<Stream<String>>`: use [SseStreamParser.parse](response.data!.stream)
+///   for SSE, or utf8.decoder + LineSplitter for line-by-line parsing.
+/// - `Future<Stream<List<int>>>`: return `response.data?.stream` directly.
+/// Optional params like [cancelToken] should be forwarded; caller owns
+/// consuming/cancelling/closing the stream lifecycle.
 ///
 /// ```dart
 /// @Get('/stream')
@@ -108,18 +125,25 @@ class StreamResponse {
   const StreamResponse();
 }
 
-// ========================== 参数级：请求体与 Query（对应 requestHttp 的 body / queryParameters） ==========================
+// ========================== Parameter-level: body/query ==========================
 
-/// 该参数作为请求体 → requestHttp 的 [body]（生成代码传 param.toJson() 或 param）
+/// Marks this parameter as request body -> requestHttp [body].
+///
+/// Can be [Map<String, dynamic>] or any class model.
+/// If type is not Map, generator emits `param.toJson()`, so models must
+/// implement [toJson].
 class Body {
   const Body();
 }
 
-/// 用于 multipart/form-data 的一个字段/文件
+/// Marks one multipart/form-data field or file.
 ///
-/// 与 [ContentType.formData] 配合：方法上使用 @Post(path, contentType: ContentType.formData)，
-/// 多个 [Part] 参数由生成器拼成 [FormData] 作为 [body]；若参数类型为 File，生成器应转为
-/// [MultipartFile] 再填入 FormData。也可不用 [Part]，直接传 [body] 为 Map 或 FormData。
+/// Works with [ContentType.formData], for example
+/// @Post(path, contentType: ContentType.formData).
+/// Multiple [Part] arguments are merged into [FormData] as [body].
+/// If an argument type is File, generator should convert it to
+/// [MultipartFile] before inserting into FormData.
+/// You can also skip [Part] and pass [body] as Map or FormData directly.
 ///
 /// ```dart
 /// @Post('/upload', contentType: ContentType.formData)
@@ -131,7 +155,7 @@ class Part {
   final String name;
 }
 
-/// 该参数作为 Query 整体 → requestHttp 的 [queryParameters]
+/// Marks this parameter as full query map -> requestHttp [queryParameters].
 ///
 /// ```dart
 /// @Get('/user')
@@ -144,7 +168,8 @@ class Query {
   const Query();
 }
 
-/// 单参数对应 query 的一个 key → 合并到 requestHttp 的 [queryParameters][name]
+/// Maps one parameter to one query key, merged into requestHttp
+/// [queryParameters][name].
 ///
 /// ```dart
 /// @Get('/user')
@@ -158,9 +183,9 @@ class QueryKey {
   final String name;
 }
 
-// ========================== 参数级：可选扩展 ==========================
+// ========================== Parameter-level: optional extensions ==========================
 
-/// 该参数作为请求头的一个 key → requestHttp 的 [headers][name]
+/// Maps this parameter to one request header key -> requestHttp [headers][name].
 ///
 /// ```dart
 /// @Get('/user')
@@ -171,7 +196,9 @@ class Header {
   final String name;
 }
 
-/// Path 占位符：方法 path 中 {name} 由该参数替换，如 @Get('/user/{id') + @Path('id') int id
+/// Path placeholder mapping:
+/// `{name}` in method path is replaced by this argument, e.g.
+/// @Get('/user/{id}') + @Path('id') int id.
 ///
 /// ```dart
 /// @Get('/user/{id}')

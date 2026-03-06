@@ -1,4 +1,4 @@
-/// 案例2 用：用户信息模型。
+/// User model for example 2.
 class UserModel {
   UserModel({this.id, this.name, this.email});
 

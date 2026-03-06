@@ -13,21 +13,26 @@ class NetRequest {
   static final Map<String, INetClient> _clients = {};
   static final Map<String, IStreamNetClient> _streamClients = {};
 
-  /// 默认 Client 的 key 常量，常用作 [defaultKey] 的初始值。
+  /// Constant key for the default client, commonly used as initial [defaultKey].
   static const String defaultClientKey = 'default';
 
-  /// 未传 [clientKey] 时使用的默认 client 名称；可指定，如 `NetRequest.defaultKey = 'upload'`。
-  /// 规则：未传 clientKey 时，若只注册了一个 client 则用该 client，否则用 [defaultKey]。
+  /// Default client name used when [clientKey] is not provided.
+  /// Example: `NetRequest.defaultKey = 'upload'`.
+  /// Rule: if no clientKey is provided and exactly one client is registered,
+  /// use that one; otherwise use [defaultKey].
   static String defaultKey = defaultClientKey;
 
-  /// 注入名为 [defaultClientKey] 的 [INetClient]，等价于 [setClient]([defaultClientKey], client)。单测时可替换为 Mock。
+  /// Injects [INetClient] under [defaultClientKey], equivalent to
+  /// [setClient]([defaultClientKey], client). Useful for test-time mocking.
   static set client(INetClient? c) {
     setClient(defaultClientKey, c);
   }
 
-  /// 按名称注册或移除 [INetClient]。同一进程内可按场景区分，例如：业务 API、上传、SSE 等用不同 key。
-  /// - [name]：区分不同 client，如 `'default'`、`'upload'`、`'sse'`；建议用常量或枚举值。
-  /// - [client]：为 null 时移除该 name 的注册。
+  /// Registers or removes [INetClient] by name.
+  /// Different keys can be used for different scenarios in the same process
+  /// (e.g. business API, upload, SSE).
+  /// - [name]: client key such as `'default'`, `'upload'`, `'sse'`.
+  /// - [client]: if null, remove registration for [name].
   static void setClient(String name, INetClient? client) {
     if (client == null) {
       _clients.remove(name);
@@ -36,7 +41,8 @@ class NetRequest {
     }
   }
 
-  /// 解析「未显式传 clientKey」时使用的 key：仅注册一个时用该 key，多个时用 [defaultKey]。
+  /// Resolves key used when clientKey is not explicitly provided:
+  /// if one client is registered use that key, otherwise use [defaultKey].
   static String? _resolveClientKey(String? key) {
     if (key != null && key.isNotEmpty) return key;
     if (_clients.isEmpty) return null;
@@ -44,13 +50,16 @@ class NetRequest {
     return defaultKey;
   }
 
-  /// 获取已注册的 [INetClient]。[name] 为空时按 [defaultKey] 规则解析（见 [requestHttp]）。
+  /// Returns registered [INetClient].
+  /// If [name] is empty, it is resolved with [defaultKey] rules.
   static INetClient? getClient([String? name]) {
     final k = _resolveClientKey(name);
     return k != null ? _clients[k] : null;
   }
 
-  /// 按名称注册或移除 [IStreamNetClient]。与 [setClient] 分离，避免普通 client 混入流式能力。
+  /// Registers or removes [IStreamNetClient] by name.
+  /// Kept separate from [setClient] so regular clients are not mixed with
+  /// streaming capabilities.
   static void setStreamClient(String name, IStreamNetClient? client) {
     if (client == null) {
       _streamClients.remove(name);
@@ -59,7 +68,8 @@ class NetRequest {
     }
   }
 
-  /// 解析「未显式传 stream clientKey」时使用的 key：仅注册一个时用该 key，多个时用 [defaultKey]。
+  /// Resolves key used when stream clientKey is not explicitly provided:
+  /// if one stream client is registered use that key, otherwise use [defaultKey].
   static String? _resolveStreamClientKey(String? key) {
     if (key != null && key.isNotEmpty) return key;
     if (_streamClients.isEmpty) return null;
@@ -67,7 +77,8 @@ class NetRequest {
     return defaultKey;
   }
 
-  /// 获取已注册的 [IStreamNetClient]。[name] 为空时按 [defaultKey] 规则解析（见 [requestStreamResponse]）。
+  /// Returns registered [IStreamNetClient].
+  /// If [name] is empty, it is resolved with [defaultKey] rules.
   static IStreamNetClient? getStreamClient([String? name]) {
     final k = _resolveStreamClientKey(name);
     return k != null ? _streamClients[k] : null;
@@ -79,11 +90,15 @@ class NetRequest {
     if (_options != null) {
       return _options!;
     }
-    throw StateError('请先设置 NetRequest.options 或 NetRequest.dioInstance 再发起请求。');
+    throw StateError(
+      'Set NetRequest.options or NetRequest.dioInstance before sending requests.',
+    );
   }
 
-  /// 根据 [NetOptions] 创建 Dio 实例（默认日志拦截器 + [NetOptions.interceptors]）。
-  /// 业务方也可在创建后追加拦截器再通过 [use] 注入，或运行时用 [addInterceptor]。
+  /// Creates a Dio instance from [NetOptions]
+  /// (default logging interceptor + [NetOptions.interceptors]).
+  /// You can add extra interceptors after creation and inject via [use],
+  /// or append at runtime via [addInterceptor].
   static Dio createDio(NetOptions options) {
     final dio = Dio(
       BaseOptions(
@@ -100,32 +115,35 @@ class NetRequest {
     return dio;
   }
 
-  /// 向当前 Dio 实例追加一个拦截器（与 Dio 的 [Interceptor] 一致）。
-  /// 需在 [options] 或 [use] 之后调用，否则抛 [StateError]。
+  /// Appends one interceptor to current Dio instance.
+  /// Call after [options] or [use], otherwise throws [StateError].
   static void addInterceptor(Interceptor interceptor) {
     _dioInstance.interceptors.add(interceptor);
   }
 
-  /// 向当前 Dio 实例按序追加多个拦截器。
+  /// Appends multiple interceptors to current Dio instance in order.
   static void addInterceptors(List<Interceptor> interceptors) {
     _dioInstance.interceptors.addAll(interceptors);
   }
 
-  /// 注入已配置好的 Dio 实例（如通过 [createDio] 创建并追加拦截器后）。
-  /// 测试时可注入 Mock Dio。
+  /// Injects a preconfigured Dio instance
+  /// (for example created by [createDio] and extended with interceptors).
+  /// Useful for tests.
   @visibleForTesting
   static void use(Dio dio) {
     _dio = dio;
   }
 
-  /// 测试用：直接设置 Dio 实例，等同于 [use]。便于单测注入 Mock。
+  /// Test helper: directly sets Dio instance, same behavior as [use].
   @visibleForTesting
   static set dioInstance(Dio dio) {
     _dio = dio;
   }
 
-  /// 注入配置，必须在发起任何请求前调用（通常放在 main 或 App 启动处）。
-  /// 内部会调用 [createDio] 并覆盖当前 _dio，若需先配置再追加拦截器，请使用 [createDio] + [use]。
+  /// Injects options and must be called before any request
+  /// (typically in main/app startup).
+  /// Internally calls [createDio] and replaces current _dio.
+  /// If you need to add interceptors after create, use [createDio] + [use].
   static set options(NetOptions options) {
     _options = options;
     _dio = createDio(options);
@@ -135,24 +153,32 @@ class NetRequest {
     final dio = _dio;
     if (dio == null) {
       throw StateError(
-          '请先设置 NetRequest.options 或 NetRequest.dioInstance 再发起请求。');
+        'Set NetRequest.options or NetRequest.dioInstance before sending requests.',
+      );
     }
     return dio;
   }
 
-  /// 底层 Dio 实例，用于流式请求（SSE、Stream）等场景的回退实现。
+  /// Underlying Dio instance used as fallback for streaming requests
+  /// (SSE/Stream and similar).
   ///
-  /// 流式请求不通过 [requestHttp]，可选用 [requestStreamResponse] 或直接使用 [dio] 发起。
+  /// Streaming requests do not go through [requestHttp].
+  /// Use [requestStreamResponse] or [dio] directly.
   static Dio get dio => _dioInstance;
 
-  /// 流式响应入口：与 [requestHttp] 参数一致，但返回原始 [Response]（[response.data] 为 [ResponseBody]，含 [ResponseBody.stream]）。
+  /// Streaming response entry point.
+  /// Parameters are aligned with [requestHttp], but it returns raw [Response]
+  /// (`response.data` is [ResponseBody] containing [ResponseBody.stream]).
   ///
-  /// 供生成器生成「返回 Stream 的方法」：先 await [requestStreamResponse]，再返回 `response.data?.stream`；
-  /// 若为 SSE，可用 [SseStreamParser.parse](response.data!.stream) 得到 `Stream<String>`。
-  /// 调用方负责：消费 stream、[cancelToken] 取消、异常与关闭。
+  /// For generated methods returning Stream:
+  /// await [requestStreamResponse] first, then return `response.data?.stream`.
+  /// For SSE, you may parse via
+  /// [SseStreamParser.parse](response.data!.stream) to get `Stream<String>`.
+  /// Caller is responsible for consumption, [cancelToken], errors, and closing.
   ///
-  /// - [clientKey] 可选：按 [defaultKey] 规则解析已注册的 stream client（见 [setStreamClient]）。
-  /// - 若未命中可用的 stream client，则回退使用 [dio] 发起流式请求。
+  /// - [clientKey] optional: resolves registered stream client by [defaultKey]
+  ///   rules.
+  /// - If no matching stream client is found, falls back to [dio].
   static Future<Response> requestStreamResponse({
     required String url,
     required HttpMethod method,
@@ -170,7 +196,9 @@ class NetRequest {
       final streamClient = _streamClients[resolvedKey];
       if (streamClient == null) {
         throw StateError(
-            '未注册 stream client: "$resolvedKey"，请先调用 NetRequest.setStreamClient("$resolvedKey", yourClient)。');
+          'Stream client not registered: "$resolvedKey". '
+          'Call NetRequest.setStreamClient("$resolvedKey", yourClient) first.',
+        );
       }
       return streamClient.requestStreamResponse(
         url: url,
@@ -197,12 +225,12 @@ class NetRequest {
     );
   }
 
-  /// 默认流式请求实现，使用 Dio 发起请求
+  /// Default streaming request implementation using Dio.
   static Future<Response> _requestStreamWithDio({
     required String url,
     required HttpMethod method,
     Map<String, dynamic>? queryParameters,
-    dynamic body,
+    Map<String, dynamic>? body,
     ContentType contentType = ContentType.json,
     Map<String, dynamic>? headers,
     Map<String, dynamic>? extra,
@@ -248,10 +276,19 @@ class NetRequest {
     }
   }
 
-  /// 通用请求入口（设计对齐 Retrofit：Query 用 [queryParameters]，Body 用 [body]）。
-  /// 成功约定：HTTP 2xx 且 response.code == [BusinessCode.success] 时返回 [BaseResponse]；否则抛 [ApiError]。
-  /// [clientKey] 可选：不传时，若只注册了一个 client 则用该 client，否则用 [defaultKey]（可指定）；未注册时抛 [StateError]。
-  /// [cancelToken] 可选，页面 dispose 时取消可避免「页面已关仍回调」。
+  /// Generic request entry point aligned with Retrofit semantics:
+  /// Query uses [queryParameters], body uses [body].
+  ///
+  /// Success contract:
+  /// HTTP 2xx and response.code == [BusinessCode.success] returns [BaseResponse];
+  /// otherwise [ApiError] is thrown.
+  ///
+  /// [clientKey] optional:
+  /// when omitted, if exactly one client is registered that one is used;
+  /// otherwise [defaultKey] is used. Missing registration throws [StateError].
+  ///
+  /// [cancelToken] optional:
+  /// cancelling during widget dispose can avoid callbacks after page close.
   static Future<BaseResponse<T>> requestHttp<T>({
     required String url,
     required HttpMethod method,
@@ -270,8 +307,9 @@ class NetRequest {
     if (client == null) {
       throw StateError(
         resolvedKey == null
-            ? '未注册任何 client，请先调用 NetRequest.setClient(name, yourClient)。'
-            : '未注册 client: "$resolvedKey"，请先调用 NetRequest.setClient("$resolvedKey", yourClient)。',
+            ? 'No client registered. Call NetRequest.setClient(name, yourClient) first.'
+            : 'Client not registered: "$resolvedKey". '
+                'Call NetRequest.setClient("$resolvedKey", yourClient) first.',
       );
     }
     return client.requestHttp<T>(

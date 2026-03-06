@@ -8,7 +8,7 @@ import 'package:net_retrofit_kit_example/pages/stream_request_page.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  // 默认 Client：业务 API（必须在使用 NetRequest 前调用）
+  // Default client for business APIs (must be set before using NetRequest).
   NetRequest.options = const NetOptions(
     baseUrl: 'https://httpbin.org',
     connectTimeout: Duration(seconds: 15),
@@ -19,7 +19,7 @@ void main() {
     NetRequest.defaultClientKey,
     DefaultNetClient(NetRequest.createDio(NetRequest.options)),
   );
-  // 多 Client：注册自定义 upload Client（实现 INetClient，独立 Dio、超时与自定义逻辑）
+  // Multi-client setup: register a dedicated upload client.
   final uploadDio = NetRequest.createDio(const NetOptions(
     baseUrl: 'https://httpbin.org',
     connectTimeout: Duration(seconds: 15),
@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'net_retrofit_kit 示例',
+      title: 'net_retrofit_kit Example',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,
@@ -54,35 +54,36 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  String _status = '点击「全部案例」查看多案例，或使用下方按钮快速体验';
+  String _status =
+      'Open \"All examples\" to explore scenarios, or use quick actions below.';
   bool _loading = false;
   final _repository = DemoRepository.instance;
 
   Future<void> _doLogin() async {
     setState(() {
       _loading = true;
-      _status = '请求中… login(mobile)';
+      _status = 'Requesting... login(mobile)';
     });
     final result = await _repository.login('13800138000', 'demo_google_token');
     setState(() {
-      _status = result ? '登录成功' : '登录失败';
+      _status = result ? 'Login succeeded' : 'Login failed';
     });
   }
 
   Future<void> _doGetUserInfo() async {
     setState(() {
       _loading = true;
-      _status = '请求中… getUserInfo()';
+      _status = 'Requesting... getUserInfo()';
     });
     try {
       final result = await _repository.getUserInfo();
       setState(() {
         _status = result != null
-            ? '用户信息: ${result.userId} / ${result.mobile}（DemoModel）'
-            : 'getUserInfo 返回 null';
+            ? 'User info: ${result.userId} / ${result.mobile} (DemoModel)'
+            : 'getUserInfo returned null';
       });
     } catch (e, st) {
-      setState(() => _status = '失败: $e');
+      setState(() => _status = 'Failed: $e');
       debugPrintStack(stackTrace: st);
     } finally {
       setState(() => _loading = false);
@@ -92,7 +93,7 @@ class _HomePageState extends State<HomePage> {
   Future<void> _doSaveArchives() async {
     setState(() {
       _loading = true;
-      _status = '请求中… saveArchives(body)';
+      _status = 'Requesting... saveArchives(body)';
     });
     try {
       final ok = await _repository.saveArchives({
@@ -100,9 +101,9 @@ class _HomePageState extends State<HomePage> {
         'time': DateTime.now().toIso8601String(),
       });
       setState(
-          () => _status = 'saveArchives: ${ok == true ? "成功" : "失败或 false"}');
+          () => _status = 'saveArchives: ${ok == true ? "success" : "failed or false"}');
     } catch (e, st) {
-      setState(() => _status = '失败: $e');
+      setState(() => _status = 'Failed: $e');
       debugPrintStack(stackTrace: st);
     } finally {
       setState(() => _loading = false);
@@ -113,7 +114,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('net_retrofit_kit 示例'),
+        title: const Text('net_retrofit_kit Example'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
       body: Center(
@@ -144,7 +145,7 @@ class _HomePageState extends State<HomePage> {
                     MaterialPageRoute(builder: (_) => const ExamplesListPage()),
                   ),
                   icon: const Icon(Icons.list),
-                  label: const Text('全部案例（多案例入口）'),
+                  label: const Text('All Examples'),
                 ),
                 const SizedBox(height: 8),
                 FilledButton.icon(
@@ -176,7 +177,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   icon: const Icon(Icons.stream),
-                  label: const Text('流式请求示例'),
+                  label: const Text('Stream Request Example'),
                 ),
               ],
             ),

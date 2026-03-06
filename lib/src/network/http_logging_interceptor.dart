@@ -1,8 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:net_retrofit_kit/src/network/http_logger.dart';
 
-/// 默认日志拦截器：根据 [Options.extra]['enableLogging'] 决定是否输出请求/响应/错误。
-/// 在 [NetRequest.createDio] 或设置 [NetRequest.options] 时会自动挂到 Dio 实例上。
+/// Default logging interceptor controlled by
+/// [Options.extra]['enableLogging'] for request/response/error output.
+/// It is automatically attached when [NetRequest.createDio] is used or when
+/// [NetRequest.options] is set.
 class HttpLoggingInterceptor extends Interceptor {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {

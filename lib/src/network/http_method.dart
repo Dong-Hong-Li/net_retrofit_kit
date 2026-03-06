@@ -1,4 +1,4 @@
-/// HTTP 方法。
+/// HTTP methods.
 enum HttpMethod {
   get,
   post,

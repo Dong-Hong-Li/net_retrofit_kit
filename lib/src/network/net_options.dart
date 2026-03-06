@@ -1,8 +1,9 @@
 import 'package:dio/dio.dart';
 
-/// 网络层配置，由业务方在启动时通过 [NetRequest.options] 传入。
+/// Network-layer configuration injected at startup via [NetRequest.options].
 ///
-/// [interceptors] 在 [NetRequest.createDio] 时按顺序添加到 Dio（在默认日志拦截器之后）。
+/// [interceptors] are appended to Dio in [NetRequest.createDio] in order,
+/// after the default logging interceptor.
 class NetOptions {
   const NetOptions({
     required this.baseUrl,
@@ -12,18 +13,19 @@ class NetOptions {
     this.interceptors,
   });
 
-  /// 基础 URL
+  /// Base URL.
   final String baseUrl;
 
-  /// 连接超时时间
+  /// Connection timeout.
   final Duration connectTimeout;
 
-  /// 接收超时时间
+  /// Receive timeout.
   final Duration receiveTimeout;
 
-  /// 发送超时时间
+  /// Send timeout.
   final Duration sendTimeout;
 
-  /// 拦截器列表，与 Dio 的 [Interceptor] 一致；在默认日志拦截器之后按序添加。
+  /// Interceptor list compatible with Dio [Interceptor], appended in order
+  /// after the default logging interceptor.
   final List<Interceptor>? interceptors;
 }

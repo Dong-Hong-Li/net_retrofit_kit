@@ -1,19 +1,19 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 
-/// 日志等级
+/// Logging verbosity level.
 enum LogLevel {
-  none, // 不输出日志
-  basic, // 只输出 curl（仅 URL、方法）
-  headers, // curl + 请求头
-  body, // 完整 curl（含 body/query）
+  none, // no logs
+  basic, // curl only (URL + method)
+  headers, // curl + headers
+  body, // full curl (body/query included)
 }
 
 class HttpLogger {
-  /// 当前日志等级
+  /// Current logging level.
   static LogLevel logLevel = kDebugMode ? LogLevel.body : LogLevel.none;
 
-  /// 是否默认开启日志
+  /// Whether logging is enabled by default.
   static bool defaultEnableLogging = kDebugMode;
 
   static void setLogLevel(LogLevel level) {
@@ -31,7 +31,7 @@ class HttpLogger {
     return defaultEnableLogging;
   }
 
-  /// 记录请求：输出可复制的 curl 命令
+  /// Logs request as a copyable curl command.
   static void logRequest(
     String url,
     String method,
@@ -49,7 +49,8 @@ class HttpLogger {
     debugPrint('════════════════════════════════════════════════════════');
   }
 
-  /// 构建多行 curl 命令，便于阅读和复制到终端执行（每行末尾 `\` 续行）
+  /// Builds a multi-line curl command for readability and terminal copy/paste
+  /// (line continuation with trailing `\`).
   static List<String> _buildCurlLines(
     String url,
     String method,
@@ -59,7 +60,7 @@ class HttpLogger {
     final methodUpper = method.toUpperCase();
     final isGet = methodUpper == 'GET';
 
-    // URL：GET 时把 body 当作 query 拼到 URL
+    // For GET, append map body as query parameters in URL.
     String fullUrl = url;
     String? dataPiece;
     if (body != null && body is Map<String, dynamic> && body.isNotEmpty) {
@@ -94,7 +95,7 @@ class HttpLogger {
       lines.add('  -d \'$dataPiece\'');
     }
 
-    // 最后一行不要续行符
+    // Do not keep line-continuation on the last line.
     if (lines.isNotEmpty && lines.last.endsWith(' \\')) {
       lines[lines.length - 1] = lines.last.substring(0, lines.last.length - 2);
     }
@@ -113,7 +114,7 @@ class HttpLogger {
     return s.replaceAll("'", r"'\''");
   }
 
-  /// 记录响应（状态码、耗时、可选 body）
+  /// Logs response (status code, latency, optional body).
   static void logResponse(
     String url,
     int statusCode,
@@ -134,7 +135,7 @@ class HttpLogger {
     debugPrint('════════════════════════════════════════════════════════');
   }
 
-  /// 记录错误
+  /// Logs request error.
   static void logError(
     String url,
     dynamic error,
@@ -174,7 +175,7 @@ class HttpLogger {
         debugPrint('$prefix$line');
       }
     } catch (_) {
-      debugPrint('$prefix[不可格式化]: $data');
+      debugPrint('$prefix[Unformattable]: $data');
     }
   }
 }

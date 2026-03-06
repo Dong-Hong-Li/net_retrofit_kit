@@ -1,4 +1,4 @@
-/// 请求体 / Content-Type。
+/// Request body / Content-Type.
 enum ContentType {
   json,
   formData,

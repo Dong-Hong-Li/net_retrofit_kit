@@ -1,4 +1,4 @@
-// 案例：泛型返回类型 Future<Response<String>>，验证生成 parser 为 (Response<String>).fromJson 或 (Response < String >).fromJson。
+// Example: generic return type Future<Response<String>>; verifies generated parser uses (Response<String>).fromJson.
 
 import 'package:net_retrofit_kit/net_retrofit_kit.dart';
 

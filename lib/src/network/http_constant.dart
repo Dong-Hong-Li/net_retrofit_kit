@@ -1,7 +1,9 @@
 typedef DataParser<T> = T Function(Object? json);
 
-/// 统一业务响应体。成功约定：HTTP 200 且 [code] == [BusinessCode.success]（0）时 [isSuccess] 为 true；
-/// 否则视为业务拒绝，[NetRequest.requestHttp] 会直接抛 [ApiError.businessReject]。
+/// Unified business response wrapper.
+/// Success is defined as HTTP 200 and [code] == [BusinessCode.success] (0),
+/// in which case [isSuccess] is true; otherwise it is treated as business
+/// rejection and [NetRequest.requestHttp] throws [ApiError.businessReject].
 class BaseResponse<T> {
   final int code;
   final String msg;
@@ -15,10 +17,11 @@ class BaseResponse<T> {
     this.total = 0,
   });
 
-  /// 是否业务成功：code == [BusinessCode.success]
+  /// Whether business-layer status is successful: code == [BusinessCode.success].
   bool get isSuccess => code == BusinessCode.success;
 
-  /// 由业务层自行解析。msg 兼容后端字段 [msg] 或 [message]；data 为 null 时不调用 [dataParser]。
+  /// Parsed by business-layer rules. `msg` is compatible with backend fields
+  /// [msg] and [message]. [dataParser] is not called when data is null.
   factory BaseResponse.fromJson(Map<String, dynamic> json,
       {DataParser<T>? dataParser}) {
     final rawData = json['data'];
@@ -31,7 +34,7 @@ class BaseResponse<T> {
           data = dataParser(rawData);
         } catch (e, _) {
           throw ArgumentError(
-            'BaseResponse.fromJson dataParser 解析失败: $e',
+            'BaseResponse.fromJson dataParser parse failed: $e',
             'data',
           );
         }
@@ -72,12 +75,12 @@ class HttpConstant {
   static const String success = 'succ';
 }
 
-/// 业务层成功码：与后端约定 code == 0 表示成功，与 HTTP 状态码区分。
+/// Business-layer success code agreed with backend: code == 0.
 class BusinessCode {
   static const int success = 0;
 }
 
-/// HTTP 状态码（与业务 code 区分）
+/// HTTP status codes (separate from business code).
 class ExceptionHandle {
   static const int success = 200;
   static const int unauthorized = 401;
