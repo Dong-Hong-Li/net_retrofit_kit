@@ -128,7 +128,8 @@ class _ExamplesListPageState extends State<ExamplesListPage> {
           ),
           _card(
             title: 'Example 3: Article API',
-            subtitle: '@Post @Body, @Put, @Delete @Path; @Body supports Map or class model (toJson)',
+            subtitle:
+                '@Post @Body, @Put, @Delete @Path; @Body supports Map or class model (toJson)',
             children: [
               _btn(
                   'create(@Body Map)',

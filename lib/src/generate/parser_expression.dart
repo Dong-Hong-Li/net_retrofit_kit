@@ -1,8 +1,10 @@
 // No external dependencies. Used by both generator and tests.
 
 bool _hasSpaceAroundAngleBrackets(String s) {
-  return s.contains(' <') || s.contains('< ') ||
-      s.contains(' >') || s.contains('> ');
+  return s.contains(' <') ||
+      s.contains('< ') ||
+      s.contains(' >') ||
+      s.contains('> ');
 }
 
 /// Builds a parser expression from return type name and optional dataPath.

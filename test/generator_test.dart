@@ -42,7 +42,8 @@ void main() {
   });
 
   group('buildParserExpression', () {
-    test('no-space generic uses TypeName.fromJson; spaced generic is wrapped', () {
+    test('no-space generic uses TypeName.fromJson; spaced generic is wrapped',
+        () {
       final a = buildParserExpression('Response<String>', null);
       expect(a, contains('Response<String>.fromJson'));
       expect(a, isNot(contains('(Response<String>)')));
@@ -98,7 +99,8 @@ void main() {
   });
 
   group('generic return type generation consistency', () {
-    test('requestHttp generic and parser type stay consistent without spaces', () {
+    test('requestHttp generic and parser type stay consistent without spaces',
+        () {
       final path = 'example/lib/server/response_type_api.g.dart';
       final file = File(path);
       if (!file.existsSync()) {

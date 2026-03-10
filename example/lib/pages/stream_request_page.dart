@@ -118,7 +118,8 @@ class _StreamRequestPageState extends State<StreamRequestPage> {
                 ),
                 child: _lines.isEmpty
                     ? const Center(
-                        child: Text('No data yet. Click the button above to start.'))
+                        child: Text(
+                            'No data yet. Click the button above to start.'))
                     : ListView.builder(
                         itemCount: _lines.length,
                         itemBuilder: (_, i) => Padding(

@@ -55,7 +55,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   String _status =
-      'Open \"All examples\" to explore scenarios, or use quick actions below.';
+      'Open "All examples" to explore scenarios, or use quick actions below.';
   bool _loading = false;
   final _repository = DemoRepository.instance;
 
@@ -100,8 +100,8 @@ class _HomePageState extends State<HomePage> {
         'key': 'net_retrofit_kit_example',
         'time': DateTime.now().toIso8601String(),
       });
-      setState(
-          () => _status = 'saveArchives: ${ok == true ? "success" : "failed or false"}');
+      setState(() => _status =
+          'saveArchives: ${ok == true ? "success" : "failed or false"}');
     } catch (e, st) {
       setState(() => _status = 'Failed: $e');
       debugPrintStack(stackTrace: st);
