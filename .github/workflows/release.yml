@@ -4,7 +4,7 @@ name: Release
 on:
   push:
     # 推代码到 main 时，或推送以 v 开头的 tag（如 v0.2.8）时
-    branches: [main]
+    branches: [main, develop]
     tags: ['v*']
     # 只有这些目录/文件有改动才跑（避免改 README 也跑一遍）；
     paths:
@@ -12,8 +12,8 @@ on:
       - 'lib/**'
       - 'test/**'
   pull_request:
-    # 有人提 PR 到 main 时
-    branches: [main]
+    # 有人提 PR 到 main 或 develop 时
+    branches: [main, develop]
     # 只有这些目录/文件有改动才跑（避免改 README 也跑一遍）
     paths:
       - 'pubspec.yaml'
