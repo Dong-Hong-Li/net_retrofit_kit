@@ -16,11 +16,14 @@ Thumbs.db
 build/
 *.freezed.dart
 
-# 测试/覆盖率
+# tests / coverage
 coverage/
 *.lcov
 
-# 环境/本地
+# environment / local
 .env
 .env.*
 !.env.example
+
+# 本地/团队规则文档，不纳入版本跟踪
+docs/

@@ -1,12 +1,16 @@
-// 无外部依赖，供生成器与测试使用。
+// No external dependencies. Used by both generator and tests.
 
 bool _hasSpaceAroundAngleBrackets(String s) {
-  return s.contains(' <') || s.contains('< ') ||
-      s.contains(' >') || s.contains('> ');
+  return s.contains(' <') ||
+      s.contains('< ') ||
+      s.contains(' >') ||
+      s.contains('> ');
 }
 
-/// 根据返回类型名和 dataPath 生成 parser 表达式。
-/// 类型名通常由 [InterfaceType].element.name + typeArguments 拼接（无空格）；若含空格则加括号避免被解析成比较运算。
+/// Builds a parser expression from return type name and optional dataPath.
+/// Type names are usually built from [InterfaceType].element.name plus
+/// typeArguments (without spaces). If spaces exist around angle brackets,
+/// parentheses are added to avoid parse ambiguity.
 String buildParserExpression(String returnTypeName, String? dataPath) {
   const primitives = {'bool', 'int', 'double', 'String', 'num'};
   final isPrimitive = primitives.contains(returnTypeName) ||

@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'package:net_retrofit_kit_example/server/demo_server.dart';
 
-/// 流式请求示例：只拿结果，过程的消费在 [DemoRepository.fetchStreamLines] 里完成。
+/// Stream request demo: this page only awaits and displays final lines.
+/// Stream consumption is handled in [DemoRepository.fetchStreamLines].
 class StreamRequestPage extends StatefulWidget {
   const StreamRequestPage({super.key});
 
@@ -24,7 +25,7 @@ class _StreamRequestPageState extends State<StreamRequestPage> {
     setState(() {
       _loading = true;
       _error = '';
-      _lines = ['开始请求…'];
+      _lines = ['Starting request...'];
     });
     _cancelToken = CancelToken();
 
@@ -32,13 +33,13 @@ class _StreamRequestPageState extends State<StreamRequestPage> {
       final result =
           await _repository.fetchStreamLines(cancelToken: _cancelToken);
       setState(() {
-        _lines = ['开始请求…', ...result, '--- stream 结束 ---'];
+        _lines = ['Starting request...', ...result, '--- stream ended ---'];
         _loading = false;
       });
     } on DioError catch (e) {
       if (e.type == DioErrorType.cancel) {
         setState(() {
-          _lines = [..._lines, '已取消'];
+          _lines = [..._lines, 'Cancelled'];
           _loading = false;
         });
       } else {
@@ -57,7 +58,7 @@ class _StreamRequestPageState extends State<StreamRequestPage> {
   }
 
   void _cancelStream() {
-    _cancelToken?.cancel('用户取消');
+    _cancelToken?.cancel('Cancelled by user');
     setState(() => _loading = false);
   }
 
@@ -71,7 +72,7 @@ class _StreamRequestPageState extends State<StreamRequestPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('流式请求示例'),
+        title: const Text('Stream Request Example'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
       body: Padding(
@@ -80,7 +81,7 @@ class _StreamRequestPageState extends State<StreamRequestPage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              '过程在 [DemoRepository.fetchStreamLines] 中完成，本页只 await 并展示结果。',
+              'The stream is consumed in DemoRepository.fetchStreamLines; this page only awaits and shows results.',
               style: Theme.of(context).textTheme.bodyMedium,
             ),
             const SizedBox(height: 16),
@@ -89,14 +90,14 @@ class _StreamRequestPageState extends State<StreamRequestPage> {
                 FilledButton.icon(
                   onPressed: _loading ? null : _startStream,
                   icon: const Icon(Icons.play_arrow),
-                  label: const Text('发起流式请求'),
+                  label: const Text('Start Stream Request'),
                 ),
                 const SizedBox(width: 8),
                 if (_loading)
                   OutlinedButton.icon(
                     onPressed: _cancelStream,
                     icon: const Icon(Icons.cancel),
-                    label: const Text('取消'),
+                    label: const Text('Cancel'),
                   ),
               ],
             ),
@@ -116,7 +117,9 @@ class _StreamRequestPageState extends State<StreamRequestPage> {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: _lines.isEmpty
-                    ? const Center(child: Text('暂无数据，点击上方按钮发起请求'))
+                    ? const Center(
+                        child: Text(
+                            'No data yet. Click the button above to start.'))
                     : ListView.builder(
                         itemCount: _lines.length,
                         itemBuilder: (_, i) => Padding(

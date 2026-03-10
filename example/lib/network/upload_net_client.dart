@@ -1,14 +1,14 @@
 // ignore_for_file: deprecated_member_use
 
-// 自定义 Client 示例：实现 [INetClient]，上传请求走独立逻辑（如专用 baseUrl、超时、自定义请求头等）。
+// Custom Client example: implements [INetClient] so upload requests use separate logic (e.g. dedicated baseUrl, timeout, custom headers).
 
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:net_retrofit_kit/net_retrofit_kit.dart';
 
-/// 示例：自定义上传用 Client，实现 [INetClient] 并注册为 `upload`。
-/// 与默认 Client 区分：可单独配置 baseUrl/超时、加自定义 Header、重试、统计等。
+/// Example: custom upload Client implementing [INetClient], registered as `upload`.
+/// Separate from default client: can configure baseUrl/timeout, custom headers, retry, metrics, etc.
 class UploadNetClient implements INetClient {
   UploadNetClient(this._dio);
 
@@ -30,7 +30,7 @@ class UploadNetClient implements INetClient {
     DataParser<T>? parser,
   }) async {
     final mergedHeaders = <String, dynamic>{
-      _clientHeader: 'upload', // 自定义：标识请求来自 upload Client
+      _clientHeader: 'upload', // Custom: marks request as from upload Client
       ...?headers,
     };
     try {
@@ -82,7 +82,7 @@ class UploadNetClient implements INetClient {
     dynamic data = body;
     if (contentType == ContentType.formData) {
       if (data is FormData) {
-        // 已构建 FormData，直接使用
+        // FormData already built, use as-is
       } else if (data is Map<String, dynamic>) {
         data = FormData.fromMap(data);
       }
@@ -120,7 +120,7 @@ class UploadNetClient implements INetClient {
           cancelToken: cancelToken,
         );
       default:
-        throw UnsupportedError('不支持的请求方法: $method');
+        throw UnsupportedError('Unsupported request method: $method');
     }
   }
 
@@ -133,7 +133,7 @@ class UploadNetClient implements INetClient {
         : response.data;
     final json =
         resData is Map<String, dynamic> ? resData : <String, dynamic>{};
-    // 自定义：无 code 的响应（如 httpbin）视为成功，用整份 body 作为 data
+    // Custom: responses without 'code' (e.g. httpbin) treated as success; use full body as data
     if (!json.containsKey('code')) {
       final data = parser != null ? parser(json) : json as T;
       return BaseResponse<T>(code: 0, msg: 'ok', data: data);

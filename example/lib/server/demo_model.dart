@@ -1,4 +1,4 @@
-// 示例用模型，仅用于演示生成代码中的 parser: (json) => T.fromJson(json)。
+// Example model used to demonstrate generated parser: (json) => T.fromJson(json).
 
 class DemoModel {
   DemoModel({

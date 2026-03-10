@@ -1,8 +1,11 @@
-// 无外部依赖，供生成器与测试使用。
+// No external dependencies. Used by both generator and tests.
 
-/// 从 `Future<T>` / `Future<Stream<T>>` 等显示字符串中提取 T 的简短名称。
-/// 仅当末尾的 `>` 是外层 Future/Stream 的闭合括号时才去掉（即 `>` 个数多于 `<` 时），
-/// 避免 analyzer 返回 `Future<Response < String>` 时误删泛型闭合导致得到 `Response < String`。
+/// Extracts the inner type name T from display strings like `Future<T>` or
+/// `Future<Stream<T>>`.
+/// It only strips a trailing `>` when that bracket belongs to the outer
+/// Future/Stream wrapper (`>` count is greater than `<` count), so we do not
+/// accidentally remove generic closing brackets from analyzer outputs like
+/// `Future<Response < String>`.
 String stripReturnTypeName(String display) {
   String s = display;
   if (s.endsWith('?')) s = s.substring(0, s.length - 1);

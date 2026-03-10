@@ -3,23 +3,30 @@ import 'package:net_retrofit_kit/src/network/net_content_type.dart';
 import 'package:net_retrofit_kit/src/network/http_constant.dart';
 import 'package:net_retrofit_kit/src/network/http_method.dart';
 
-/// 普通 HTTP 客户端抽象，便于单测注入 Mock 或替换实现。
+/// Regular HTTP client abstraction for easier mocking and replacement.
 ///
-/// 设计对齐 Retrofit：Query 用 [queryParameters]，Body 用 [body]，由调用方（生成器）按注解区分。
+/// Designed to align with Retrofit semantics:
+/// Query goes into [queryParameters], body goes into [body], and annotation
+/// mapping is handled by the caller (generator).
 ///
-/// 流式请求（SSE、Stream）不在此接口内，使用独立的 `IStreamNetClient` 抽象。
+/// Streaming requests (SSE/Stream) are handled by a separate
+/// `IStreamNetClient` abstraction.
 abstract class INetClient {
-  /// 通用 HTTP 请求。
+  /// Generic HTTP request.
   ///
-  /// - [url] 请求 URL（不含 query 部分）。
-  /// - [method] 请求方法。
-  /// - [queryParameters] Query 参数（拼到 URL），对应 Retrofit @Query / @QueryMap。
-  /// - [body] 请求体（POST/PUT 等），对应 Retrofit @Body。可为 Map、可 toJson 的对象、或 [ContentType.formData] 时的 [FormData]/Map（文件字段用 [MultipartFile]）。
-  /// - [contentType] 请求 Content-Type。
-  /// - [headers] / [extra] 请求头与扩展数据。
-  /// - [enableLogging] 是否在本请求中启用日志。
-  /// - [cancelToken] 取消令牌。
-  /// - [parser] 将 response.data 解析为 T。
+  /// - [url] request URL (without query string).
+  /// - [method] HTTP method.
+  /// - [queryParameters] query params appended to URL, for Retrofit
+  ///   @Query / @QueryMap.
+  /// - [body] request payload for POST/PUT/etc., for Retrofit @Body.
+  ///   Supported values: [Map], class model with [toJson] (generator emits
+  ///   body.toJson()), or [FormData]/Map for [ContentType.formData]
+  ///   (file fields use [MultipartFile]).
+  /// - [contentType] request Content-Type.
+  /// - [headers] / [extra] request headers and extension metadata.
+  /// - [enableLogging] whether to enable logging for this request.
+  /// - [cancelToken] cancellation token.
+  /// - [parser] parses `response.data` into T.
   Future<BaseResponse<T>> requestHttp<T>({
     required String url,
     required HttpMethod method,

@@ -19,11 +19,33 @@ class ArticleApiImpl implements ArticleApi {
   }
 
   @override
+  Future<ArticleModel?> createWithModel(CreateArticleRequest body) async {
+    final response = await NetRequest.requestHttp<ArticleModel>(
+      url: '${NetRequest.options.baseUrl}/post',
+      method: HttpMethod.post,
+      body: body.toJson(),
+      parser: (json) => ArticleModel.fromJson(json as Map<String, dynamic>),
+    );
+    return response.data;
+  }
+
+  @override
   Future<ArticleModel?> update(Map<String, dynamic> body) async {
     final response = await NetRequest.requestHttp<ArticleModel>(
       url: '${NetRequest.options.baseUrl}/put',
       method: HttpMethod.put,
       body: body,
+      parser: (json) => ArticleModel.fromJson(json as Map<String, dynamic>),
+    );
+    return response.data;
+  }
+
+  @override
+  Future<ArticleModel?> updateWithModel(UpdateArticleRequest body) async {
+    final response = await NetRequest.requestHttp<ArticleModel>(
+      url: '${NetRequest.options.baseUrl}/put',
+      method: HttpMethod.put,
+      body: body.toJson(),
       parser: (json) => ArticleModel.fromJson(json as Map<String, dynamic>),
     );
     return response.data;

@@ -2,11 +2,15 @@ import 'package:dio/dio.dart';
 import 'package:net_retrofit_kit/src/network/http_method.dart';
 import 'package:net_retrofit_kit/src/network/net_content_type.dart';
 
-/// 流式网络客户端抽象（SSE/Stream）。
+/// Streaming network client abstraction (SSE/Stream).
 ///
-/// 与 [INetClient] 分离，避免普通 HTTP Client 被迫实现流式能力。
+/// Separated from [INetClient] so regular HTTP clients are not forced to
+/// implement streaming capabilities.
+/// [body] follows the same contract as [INetClient]: pass `Map` directly;
+/// class models are converted with `toJson()` by generated code.
 abstract class IStreamNetClient {
-  /// 发起流式请求，返回原始 [Response]（`response.data` 一般为 [ResponseBody]）。
+  /// Sends a streaming request and returns the raw [Response]
+  /// (`response.data` is typically [ResponseBody]).
   Future<Response> requestStreamResponse({
     required String url,
     required HttpMethod method,

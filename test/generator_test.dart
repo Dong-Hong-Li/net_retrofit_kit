@@ -6,43 +6,44 @@ import 'package:net_retrofit_kit/src/generate/return_type_name.dart';
 
 void main() {
   group('stripReturnTypeName', () {
-    test('Future<Response<String>> 提取为 Response<String>', () {
+    test('Future<Response<String>> extracts to Response<String>', () {
       expect(
         stripReturnTypeName('Future<Response<String>>'),
         equals('Response<String>'),
       );
     });
 
-    test('analyzer 返回单 > 时保留泛型闭合，不误删', () {
-      // 模拟 getDisplayString 返回 Future<Response < String>（仅一个闭合 >）
+    test('keeps generic closing when analyzer returns single >', () {
+      // Simulate getDisplayString output: Future<Response < String> with one >.
       expect(
         stripReturnTypeName('Future<Response < String>'),
         equals('Response < String>'),
       );
     });
 
-    test('带空格的双 > 提取正确', () {
+    test('extracts correctly when double > has spaces', () {
       expect(
         stripReturnTypeName('Future<Response < String >>'),
         equals('Response < String >'),
       );
     });
 
-    test('可空类型去掉 ?', () {
+    test('removes nullable suffix ?', () {
       expect(
         stripReturnTypeName('Future<Response<String>>?'),
         equals('Response<String>'),
       );
     });
 
-    test('非 Future 原样返回', () {
+    test('returns non-Future input as-is', () {
       expect(
           stripReturnTypeName('Response<String>'), equals('Response<String>'));
     });
   });
 
   group('buildParserExpression', () {
-    test('无空格泛型直接 TypeName.fromJson，带空格泛型才加括号', () {
+    test('no-space generic uses TypeName.fromJson; spaced generic is wrapped',
+        () {
       final a = buildParserExpression('Response<String>', null);
       expect(a, contains('Response<String>.fromJson'));
       expect(a, isNot(contains('(Response<String>)')));
@@ -52,7 +53,7 @@ void main() {
       expect(b, isNot(contains('Response < String >.fromJson')));
     });
 
-    test('非泛型类型名不加括号', () {
+    test('non-generic type names are not wrapped', () {
       final a = buildParserExpression('UserModel', null);
       expect(
           a,
@@ -64,7 +65,7 @@ void main() {
       expect(b, contains('DemoModel.fromJson'));
     });
 
-    test('基本类型走 as 强转，不调用 fromJson', () {
+    test('primitives use as-cast and do not call fromJson', () {
       expect(
         buildParserExpression('String', null),
         equals('parser: (json) => json as String'),
@@ -79,7 +80,7 @@ void main() {
       );
     });
 
-    test('有 dataPath 时从 json[path] 解析', () {
+    test('parses from json[path] when dataPath is provided', () {
       final a = buildParserExpression('Response<String>', 'data');
       expect(a, contains('Response<String>.fromJson'));
       expect(a, contains('["data"]'));
@@ -89,7 +90,7 @@ void main() {
       expect(b, contains('["result"]'));
     });
 
-    test('Map/List 视为非 fromJson 类型', () {
+    test('Map/List are treated as non-fromJson types', () {
       final a = buildParserExpression('Map<String, dynamic>', null);
       expect(a, equals('parser: (json) => json as Map<String, dynamic>'));
       final b = buildParserExpression('List<int>', null);
@@ -97,15 +98,17 @@ void main() {
     });
   });
 
-  group('泛型返回类型生成一致性', () {
-    test('response_type_api.g.dart 中 requestHttp 泛型与 parser 类型一致（无空格）', () {
+  group('generic return type generation consistency', () {
+    test('requestHttp generic and parser type stay consistent without spaces',
+        () {
       final path = 'example/lib/server/response_type_api.g.dart';
       final file = File(path);
       if (!file.existsSync()) {
-        return; // 未生成时跳过
+        return; // Skip when not generated.
       }
       final content = file.readAsStringSync();
-      // 生成器应使用 parserConfig.returnTypeName，与 parser 一致，避免 getDisplayString 插入空格
+      // Generator should use parserConfig.returnTypeName to stay consistent
+      // with parser and avoid spacing injected by getDisplayString.
       expect(content, contains('requestHttp<String>'));
       expect(content, isNot(contains('Response < String >')));
     });

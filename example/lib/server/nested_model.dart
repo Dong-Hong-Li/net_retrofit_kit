@@ -1,4 +1,4 @@
-/// 案例5 用：嵌套数据结构，配合 @DataPath 从 data.result 解析。
+/// Nested data model for example 5; used with @DataPath to parse from data.result.
 class NestedModel {
   NestedModel({this.value});
 

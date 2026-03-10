@@ -1,5 +1,7 @@
-// 根据 lib/src/generate/annotations.dart 与 INetClient.requestHttp 契约生成。
-// 生成器根据本配置为每个带 @Get/@Post/@Put/@Delete 的抽象方法生成实现代码。
+// Generated according to lib/src/generate/annotations.dart and
+// the INetClient.requestHttp contract.
+// For each abstract method annotated with @Get/@Post/@Put/@Delete,
+// the generator builds implementation code from this config.
 
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
@@ -7,11 +9,16 @@ import 'package:net_retrofit_kit/src/network/http_method.dart';
 import 'package:net_retrofit_kit/src/network/net_content_type.dart';
 import 'package:source_gen/source_gen.dart';
 
-/// 单个方法的生成配置，与 [annotations.dart] 及 [INetClient.requestHttp] 一一对应。
+/// Per-method generation config that maps directly to [annotations.dart]
+/// and [INetClient.requestHttp].
 ///
-/// 生成器根据 [path]、[pathParams]、baseUrl 拼 [url]；根据 [method] 填 HttpMethod；
-/// [queryParam]/[queryKeyParams] → queryParameters；[bodyParam]/[partParams] → body；
-/// [headerParams] → headers；[contentType]、[clientKey]、[parserConfig]、[stream] 对应 requestHttp 其余参数。
+/// The generator builds [url] from [path], [pathParams], and baseUrl;
+/// maps [method] to [HttpMethod];
+/// [queryParam]/[queryKeyParams] -> queryParameters;
+/// [bodyParam]/[partParams] -> body;
+/// [headerParams] -> headers;
+/// [contentType], [clientKey], [parserConfig], and [stream] map to the
+/// remaining requestHttp arguments.
 class MethodGeneratorConfig {
   const MethodGeneratorConfig({
     required this.path,
@@ -28,59 +35,71 @@ class MethodGeneratorConfig {
     required this.parserConfig,
   });
 
-  // ========================== 来自 @Get/@Post/@Put/@Delete（HttpMethodAnnotation） ==========================
+  // ========================== From @Get/@Post/@Put/@Delete ==========================
 
-  /// 相对路径，与 baseUrl 拼接得到 [url]；可含占位符，如 `/user/{id}`，由 [pathParams] 替换。
+  /// Relative path used to build [url] with baseUrl.
+  /// Supports placeholders like `/user/{id}` replaced by [pathParams].
   final String path;
 
-  /// 请求方法，对应 [HttpMethod]。
+  /// Request method, mapped to [HttpMethod].
   final HttpMethod method;
 
-  /// 请求 Content-Type，对应 [HttpMethodAnnotation.contentType]；null 表示默认 [ContentType.json]。
+  /// Request content type from [HttpMethodAnnotation.contentType].
+  /// Null means default [ContentType.json].
   final ContentType? contentType;
 
-  // ========================== 来自 @NetApi ==========================
+  // ========================== From @NetApi ==========================
 
-  /// 对应 [NetApi.client]，即 requestHttp 的 [clientKey]；null 时生成代码不传 clientKey，由 [NetRequest.defaultKey] 规则解析。
+  /// Maps from [NetApi.client], i.e. requestHttp [clientKey].
+  /// Null means generated code omits clientKey and relies on
+  /// [NetRequest.defaultKey] resolution.
   final String? clientKey;
 
-  // ========================== 来自 @StreamResponse ==========================
+  // ========================== From @StreamResponse ==========================
 
-  /// 是否为流式请求；true 时生成器应调用 [NetRequest.requestStreamResponse] 并按返回类型生成 stream 处理。
+  /// Whether this is a stream request.
+  /// If true, generator should call [NetRequest.requestStreamResponse].
   final bool stream;
 
-  // ========================== 来自 @Query / @QueryKey ==========================
+  // ========================== From @Query / @QueryKey ==========================
 
-  /// 作为 query 整体的参数名（[Query]）；存在时 requestHttp 的 queryParameters 直接为该参数。
+  /// Parameter name of full query map ([Query]).
+  /// When present, requestHttp queryParameters is assigned directly to it.
   final String? queryParam;
 
-  /// Query 单 key 与参数名映射（[QueryKey(name)] → 方法参数名），合并进 queryParameters。
+  /// Mapping from query key to method parameter name
+  /// ([QueryKey(name)] -> parameter name), merged into queryParameters.
   final Map<String, String> queryKeyParams;
 
-  // ========================== 来自 @Body / @Part ==========================
+  // ========================== From @Body / @Part ==========================
 
-  /// 作为请求体的参数名（[Body]）；formData 时与 [partParams] 二选一或组合由生成器约定。
+  /// Parameter name used as request body ([Body]).
+  /// With formData, composition with [partParams] follows generator rules.
   final String? bodyParam;
 
-  /// Part 名称与参数名映射（[Part(name)] → 方法参数名），用于 multipart/form-data。
+  /// Mapping from part name to parameter name
+  /// ([Part(name)] -> parameter name), used for multipart/form-data.
   final Map<String, String> partParams;
 
-  // ========================== 来自 @Header / @Path ==========================
+  // ========================== From @Header / @Path ==========================
 
-  /// Header 名称与参数名映射（[Header(name)] → 方法参数名）。
+  /// Mapping from header name to parameter name
+  /// ([Header(name)] -> parameter name).
   final Map<String, String> headerParams;
 
-  /// Path 占位符名称与参数名映射（path 中 {name} → 方法参数名）。
+  /// Mapping from path placeholder name to parameter name
+  /// (`{name}` in path -> parameter name).
   final Map<String, String> pathParams;
 
-  // ========================== 解析器（返回类型 + @DataPath + NetApi.responseType/unwrapSuccess） ==========================
+  // ========================== Parser config ==========================
 
-  /// 解析相关配置，用于生成 [DataParser] 或流式解析代码。
+  /// Parsing config used to generate [DataParser] or stream parser code.
   final ParserGeneratorConfig parserConfig;
 
   static const _httpMethodNames = {'Get', 'Post', 'Put', 'Delete'};
 
-  /// 用 [InterfaceType].element.name 与 typeArguments 拼接类型名，避免 [getDisplayString] 在尖括号旁插入空格。
+  /// Builds a normalized type name from [InterfaceType].element.name and
+  /// typeArguments to avoid spacing artifacts from [getDisplayString].
   static String _returnTypeNameFromType(DartType type) {
     DartType t = type;
     if (t is InterfaceType) {
@@ -97,7 +116,8 @@ class MethodGeneratorConfig {
     return t.getDisplayString();
   }
 
-  /// 从方法及其类上的 [NetApi] 注解生成 [MethodGeneratorConfig]。
+  /// Builds [MethodGeneratorConfig] from method and class-level [NetApi]
+  /// annotations.
   factory MethodGeneratorConfig.generateMethodGeneratorConfig(
     MethodElement method,
     ConstantReader netApiAnnotation,
@@ -218,7 +238,8 @@ class MethodGeneratorConfig {
   }
 }
 
-/// 解析器生成配置，对应 [NetApi.responseType]/[unwrapSuccess]、方法上的 [DataPath]、方法返回类型。
+/// Parser generation config that maps to [NetApi.responseType],
+/// [NetApi.unwrapSuccess], method-level [DataPath], and method return type.
 class ParserGeneratorConfig {
   const ParserGeneratorConfig({
     required this.responseTypeName,
@@ -227,15 +248,16 @@ class ParserGeneratorConfig {
     required this.returnTypeName,
   });
 
-  /// 统一响应类型名，如 [NetApi.responseType] 的 `BaseResponse`。
+  /// Unified response wrapper name, such as `BaseResponse`.
   final String responseTypeName;
 
-  /// 成功时是否只返回 data（[NetApi.unwrapSuccess]）。
+  /// Whether to return data only when success is true.
   final bool unwrapSuccess;
 
-  /// 从 response.data[path] 解析，对应 [DataPath.path]；null 表示用 response.data。
+  /// Parse from response.data[path]. Null means response.data.
   final String? dataPath;
 
-  /// 方法返回的类型名（如 Future 的 UserModel），用于生成 fromJson/T 解析。
+  /// Method return type name (e.g. UserModel extracted from Future<UserModel>)
+  /// used for fromJson/T parser generation.
   final String returnTypeName;
 }

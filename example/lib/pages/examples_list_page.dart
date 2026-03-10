@@ -3,12 +3,13 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:net_retrofit_kit_example/pages/stream_request_page.dart';
 import 'package:net_retrofit_kit_example/server/article_api.dart';
+import 'package:net_retrofit_kit_example/server/article_model.dart';
 import 'package:net_retrofit_kit_example/server/demo_server.dart';
 import 'package:net_retrofit_kit_example/server/nested_api.dart';
 import 'package:net_retrofit_kit_example/server/upload_api.dart';
 import 'package:net_retrofit_kit_example/server/user_api.dart';
 
-/// 全部案例入口：列出所有 API 示例并可直接发起请求。
+/// Entry page listing all API examples; tap to send requests.
 class ExamplesListPage extends StatefulWidget {
   const ExamplesListPage({super.key});
 
@@ -33,7 +34,7 @@ class _ExamplesListPageState extends State<ExamplesListPage> {
     try {
       await fn();
     } catch (e, st) {
-      setState(() => _result = '错误: $e');
+      setState(() => _result = 'Error: $e');
       debugPrintStack(stackTrace: st);
     } finally {
       setState(() => _loading = false);
@@ -48,26 +49,26 @@ class _ExamplesListPageState extends State<ExamplesListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('全部案例'),
+        title: const Text('Examples'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
           const Text(
-            '以下为生成器支持的全部注解组合示例，点击可发起请求（baseUrl: httpbin.org）',
+            'All supported annotation combinations; tap to send (baseUrl: httpbin.org)',
             style: TextStyle(fontSize: 12, color: Colors.grey),
           ),
           const SizedBox(height: 16),
           _card(
-            title: '案例1：基础 API',
-            subtitle: '@Get / @Post、@Body、@StreamResponse',
+            title: 'Example 1: Basic API',
+            subtitle: '@Get / @Post, @Body, @StreamResponse',
             children: [
               _btn(
                   'login(@Body)',
                   () => _run('login', () async {
                         await _demoApi.login({'phone': '13800138000'});
-                        _setResult('login 请求已发送');
+                        _setResult('login request sent');
                       })),
               _btn(
                   'getUserInfo()',
@@ -84,7 +85,7 @@ class _ExamplesListPageState extends State<ExamplesListPage> {
                         _setResult('saveArchives: $ok');
                       })),
               ListTile(
-                title: const Text('流式 getStreamLines'),
+                title: const Text('Stream getStreamLines'),
                 trailing: const Icon(Icons.arrow_forward),
                 onTap: () => Navigator.push(
                   context,
@@ -94,8 +95,8 @@ class _ExamplesListPageState extends State<ExamplesListPage> {
             ],
           ),
           _card(
-            title: '案例2：User API',
-            subtitle: '@QueryKey、@Path、@Header、@Query()',
+            title: 'Example 2: User API',
+            subtitle: '@QueryKey, @Path, @Header, @Query()',
             children: [
               _btn(
                   'getList(page, size)',
@@ -126,21 +127,38 @@ class _ExamplesListPageState extends State<ExamplesListPage> {
             ],
           ),
           _card(
-            title: '案例3：Article API',
-            subtitle: '@Post @Body、@Put、@Delete @Path',
+            title: 'Example 3: Article API',
+            subtitle:
+                '@Post @Body, @Put, @Delete @Path; @Body supports Map or class model (toJson)',
             children: [
               _btn(
-                  'create(@Body)',
+                  'create(@Body Map)',
                   () => _run('create', () async {
                         final r = await _articleApi
                             .create({'title': 't', 'content': 'c'});
                         _setResult(r != null ? 'Article: ${r.title}' : 'null');
                       })),
               _btn(
-                  'update(@Body)',
+                  'createWithModel(@Body CreateArticleRequest)',
+                  () => _run('createWithModel', () async {
+                        final r = await _articleApi.createWithModel(
+                            CreateArticleRequest(
+                                title: 'from model', content: 'body.toJson()'));
+                        _setResult(r != null ? 'Article: ${r.title}' : 'null');
+                      })),
+              _btn(
+                  'update(@Body Map)',
                   () => _run('update', () async {
                         final r = await _articleApi
                             .update({'id': '1', 'title': 't2'});
+                        _setResult(r != null ? 'ok' : 'null');
+                      })),
+              _btn(
+                  'updateWithModel(@Body UpdateArticleRequest)',
+                  () => _run('updateWithModel', () async {
+                        final r = await _articleApi.updateWithModel(
+                            UpdateArticleRequest(
+                                id: '1', title: 't2', content: 'c2'));
                         _setResult(r != null ? 'ok' : 'null');
                       })),
               _btn(
@@ -152,9 +170,9 @@ class _ExamplesListPageState extends State<ExamplesListPage> {
             ],
           ),
           _card(
-            title: '案例4：Upload API（自定义 Client）',
+            title: 'Example 4: Upload API (custom Client)',
             subtitle:
-                '@NetApi(client: \'upload\')，自定义 UploadNetClient 实现 INetClient，main 中 setClient(\'upload\', UploadNetClient(dio))；ContentType.formData + @Part',
+                '@NetApi(client: \'upload\'), custom UploadNetClient; main: setClient(\'upload\', UploadNetClient(dio)); ContentType.formData + @Part',
             children: [
               _btn(
                   'upload(file, name)',
@@ -164,7 +182,7 @@ class _ExamplesListPageState extends State<ExamplesListPage> {
                         f.writeAsStringSync('hello net_retrofit_kit');
                         try {
                           final r = await _uploadApi.upload(f, 'demo.txt');
-                          _setResult(r != null ? 'upload 已发送' : 'null');
+                          _setResult(r != null ? 'upload sent' : 'null');
                         } finally {
                           f.deleteSync();
                         }
@@ -172,8 +190,8 @@ class _ExamplesListPageState extends State<ExamplesListPage> {
             ],
           ),
           _card(
-            title: '案例5：Nested API',
-            subtitle: '@DataPath 从 data[path] 解析',
+            title: 'Example 5: Nested API',
+            subtitle: '@DataPath parses from data[path]',
             children: [
               _btn(
                   'getNested()',

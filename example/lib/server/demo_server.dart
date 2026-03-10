@@ -1,5 +1,5 @@
-// 示例：手写抽象类 + 方法注解，运行 build_runner 生成 demo_server.g.dart。
-// 实现类名为 DemoServerImpl，Repository 委托该实现体发请求。
+// Example: define abstract class + method annotations, run build_runner to generate demo_server.g.dart.
+// Implementation class is DemoServerImpl; Repository delegates to it for requests.
 
 import 'dart:convert';
 
@@ -10,7 +10,7 @@ import 'demo_model.dart';
 
 part 'demo_server.g.dart';
 
-/// 案例1：基础 API — @Get / @Post、@Body、流式 @StreamResponse。
+/// Example 1: Basic API — @Get / @Post, @Body, streaming @StreamResponse.
 @NetApi()
 abstract class DemoServer {
   @Post('/post')
@@ -30,7 +30,7 @@ abstract class DemoServer {
   Future<Stream<String>> getStreamLines({CancelToken? cancelToken});
 }
 
-/// 示例 Repository：委托 [DemoServerImpl] 发请求。
+/// Example Repository: delegates to [DemoServerImpl] for requests.
 class DemoRepository {
   static DemoRepository get instance => DemoRepository._();
 
@@ -63,8 +63,8 @@ class DemoRepository {
     }
   }
 
-  // 流式结果两种用法：① 等流全部再返回 List  ② 读一点反一点，每行回调
-  /// 方式一：等流全部读完再返回。Page 只需 await 并展示 [result]。
+  // Two ways to consume stream: (1) collect all lines then return List; (2) callback per line.
+  /// Option 1: wait for full stream then return. Page can await and display [result].
   Future<List<String>> fetchStreamLines({CancelToken? cancelToken}) async {
     final stream = await _mapper.getStreamLines(cancelToken: cancelToken);
     final lines = <String>[];
@@ -74,7 +74,7 @@ class DemoRepository {
     return lines;
   }
 
-  /// 方式二：读一点反一点，每收到一行就调 [onLine]。Page 可在回调里 setState 实时追加。
+  /// Option 2: callback per line via [onLine]. Page can setState in the callback to append in real time.
   Future<void> forEachStreamLine({
     CancelToken? cancelToken,
     required void Function(String line) onLine,

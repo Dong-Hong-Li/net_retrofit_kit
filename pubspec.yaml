@@ -1,6 +1,6 @@
 name: net_retrofit_kit
-description: "Declarative HTTP client built on Dio: define APIs with annotations and generate implementations with build_runner. Supports multiple clients, custom parsing, and unified error handling."
-version: 0.2.6
+description: "Declarative HTTP client built on Dio: define APIs with annotations and generate implementations with build_runner. Supports multiple clients, custom parsing, and unified error handling. @Body() accepts Map<String, dynamic> or a class model; for non-Map types the generator emits body.toJson(), so models must implement toJson."
+version: 0.2.10
 repository: https://github.com/Dong-Hong-Li/net_retrofit_kit
 homepage: https://github.com/Dong-Hong-Li/net_retrofit_kit
 documentation: https://github.com/Dong-Hong-Li/net_retrofit_kit#readme

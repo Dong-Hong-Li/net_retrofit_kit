@@ -14,7 +14,7 @@
 
 ```yaml
 dependencies:
-  net_retrofit_kit: ^0.2.6
+  net_retrofit_kit: ^0.2.8
   dio: ">=5.0.0"
 dev_dependencies:
   build_runner: ^2.4.0
@@ -57,7 +57,7 @@ abstract class UserApi {
 |------|------|
 | `@NetApi()` | 标在抽象类上。可选 `client: 'upload'` 使用具名 Client；否则走 [NetRequest.defaultKey](doc/04-多Client.md)。 |
 | `@Get(path)` `@Post(path)` `@Put(path)` `@Delete(path)` | HTTP 方法 + 路径。 |
-| `@Body()` | 请求体。 |
+| `@Body()` | 请求体。可为 `Map<String, dynamic>` 或 class model；非 Map 时生成器会生成 `body.toJson()`，模型须实现 `toJson`。 |
 | `@Query()` | 完整 query map。`@QueryKey('name')` 单个 query 参数。 |
 | `@Path('id')` | 路径参数，path 中写 `:id`。 |
 | `@Header('Authorization')` | 请求头。 |

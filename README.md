@@ -14,7 +14,7 @@ Declarative HTTP client for Flutter: **annotations + codegen**, based on Dio. [G
 
 ```yaml
 dependencies:
-  net_retrofit_kit: ^0.2.6
+  net_retrofit_kit: ^0.2.8
   dio: ">=5.0.0"
 dev_dependencies:
   build_runner: ^2.4.0
@@ -57,7 +57,7 @@ abstract class UserApi {
 |------------|-----|
 | `@NetApi()` | On abstract class. Optional `client: 'upload'` for named client; else uses [NetRequest.defaultKey](doc/04-multi-client.md). |
 | `@Get(path)` `@Post(path)` `@Put(path)` `@Delete(path)` | HTTP method + path. |
-| `@Body()` | Request body. |
+| `@Body()` | Request body. Accepts `Map<String, dynamic>` or a class model; for non-Map types the generator emits `body.toJson()`, so the model must implement `toJson`. |
 | `@Query()` | Full query map. `@QueryKey('name')` = single query param. |
 | `@Path('id')` | Path param for `:id` in path. |
 | `@Header('Authorization')` | Request header. |

@@ -8,6 +8,32 @@
 
 ---
 
+## [0.2.8](https://github.com/Dong-Hong-Li/net_retrofit_kit/releases/tag/v0.2.8) - 2026-03-06
+
+### Added / 新增
+
+**English**
+
+- **@Body() convention**: `@Body()` now accepts either `Map<String, dynamic>` or a class model. When the parameter type is not `Map`, the generator emits `param.toJson()`; the model must implement `toJson`. Documented in pubspec description, README, [INetClient]/[IStreamNetClient], and annotations.
+- **Example**: Article API example extended with `createWithModel(@Body() CreateArticleRequest body)` and `updateWithModel(@Body() UpdateArticleRequest body)` plus request models `CreateArticleRequest` / `UpdateArticleRequest` with `toJson()`.
+
+**中文**
+
+- **@Body() 约定**：`@Body()` 现支持 `Map<String, dynamic>` 或 class model。参数类型非 Map 时，生成器生成 `param.toJson()`，模型须实现 `toJson`。已在 pubspec 描述、README、[INetClient]/[IStreamNetClient] 及注解中说明。
+- **示例**：Article API 示例新增 `createWithModel(@Body() CreateArticleRequest body)`、`updateWithModel(@Body() UpdateArticleRequest body)` 及带 `toJson()` 的请求模型 `CreateArticleRequest` / `UpdateArticleRequest`。
+
+### Changed / 变更
+
+**English**
+
+- **Comments and UI in English**: All comments and user-facing strings in `example/lib` (server APIs, models, network clients, examples list page) are now in English.
+
+**中文**
+
+- **注释与文案英文化**：`example/lib` 下所有注释及界面文案（server API、模型、网络 Client、示例列表页）已改为英文。
+
+---
+
 ## [0.2.6](https://github.com/Dong-Hong-Li/net_retrofit_kit/releases/tag/v0.2.6) - 2026-03-05
 
 ### Changed / 变更

@@ -1,19 +1,21 @@
 import 'package:dio/dio.dart';
 
-/// 错误类型：统一用这一套，不再使用 HttpError / NetRequestShoppingException / NetRequestShoppingRreject。
+/// Unified error categories used by the package.
 enum ApiErrorKind {
-  /// 网络层异常（如 DioError、超时、断网）
+  /// Transport/network failure (e.g. DioError, timeout, offline).
   networkFailure,
 
-  /// 业务拒绝：HTTP 200 但 code != BusinessCode.success
+  /// Business rejection: HTTP 200 but code != BusinessCode.success.
   businessReject,
 
-  /// 请求被取消（如用户取消、页面 dispose 取消）
+  /// Request cancelled (e.g. user cancellation or dispose-triggered cancel).
   cancelled,
 }
 
-/// 唯一对外使用的 API 错误类型。
-/// 约定：成功 = HTTP 200 且业务 code == 0（BusinessCode.success）；其余为失败，用 [kind] 区分场景。
+/// Public API error type.
+/// Success is defined as HTTP 200 and business code == 0
+/// ([BusinessCode.success]); all other cases are failures distinguished by
+/// [kind].
 class ApiError implements Exception {
   final ApiErrorKind kind;
   final int? code;
@@ -29,7 +31,7 @@ class ApiError implements Exception {
     this.cause,
   });
 
-  /// 从 Dio 异常构造（网络失败或取消）
+  /// Creates from Dio error (network failure or cancellation).
   factory ApiError.fromDioError(DioError e) {
     final kind = e.type == DioErrorType.cancel
         ? ApiErrorKind.cancelled
@@ -41,7 +43,7 @@ class ApiError implements Exception {
     );
   }
 
-  /// 从业务响应构造（code != 0）
+  /// Creates from a business-layer rejection response (code != 0).
   factory ApiError.businessReject({
     required int code,
     String message = '',
