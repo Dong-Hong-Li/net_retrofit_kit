@@ -24,3 +24,6 @@ coverage/
 .env
 .env.*
 !.env.example
+
+# 本地/团队规则文档，不纳入版本跟踪
+docs/
