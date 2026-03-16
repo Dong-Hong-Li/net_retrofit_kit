@@ -36,8 +36,8 @@ class _StreamRequestPageState extends State<StreamRequestPage> {
         _lines = ['Starting request...', ...result, '--- stream ended ---'];
         _loading = false;
       });
-    } on DioError catch (e) {
-      if (e.type == DioErrorType.cancel) {
+    } on DioException catch (e) {
+      if (e.type == DioExceptionType.cancel) {
         setState(() {
           _lines = [..._lines, 'Cancelled'];
           _loading = false;

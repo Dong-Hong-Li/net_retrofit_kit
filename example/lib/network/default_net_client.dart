@@ -48,7 +48,7 @@ class DefaultNetClient implements INetClient {
 
       _ensureSuccessStatus(response);
       return _handleResponseJson<T>(response, parser: parser);
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       throw ApiError.fromDioError(e);
     }
   }

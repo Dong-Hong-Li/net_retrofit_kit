@@ -125,9 +125,9 @@ void main() {
     });
 
     test('fromDioError cancel', () {
-      final dioEx = DioError(
+      final dioEx = DioException(
         requestOptions: RequestOptions(path: '/'),
-        type: DioErrorType.cancel,
+        type: DioExceptionType.cancel,
       );
       final e = ApiError.fromDioError(dioEx);
       expect(e.kind, ApiErrorKind.cancelled);
@@ -135,9 +135,9 @@ void main() {
     });
 
     test('fromDioError non-cancel', () {
-      final dioEx = DioError(
+      final dioEx = DioException(
         requestOptions: RequestOptions(path: '/'),
-        type: DioErrorType.connectionTimeout,
+        type: DioExceptionType.connectionTimeout,
       );
       final e = ApiError.fromDioError(dioEx);
       expect(e.kind, ApiErrorKind.networkFailure);

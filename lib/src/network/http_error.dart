@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 
 /// Unified error categories used by the package.
 enum ApiErrorKind {
-  /// Transport/network failure (e.g. DioError, timeout, offline).
+  /// Transport/network failure (e.g. DioException, timeout, offline).
   networkFailure,
 
   /// Business rejection: HTTP 200 but code != BusinessCode.success.
@@ -32,8 +32,8 @@ class ApiError implements Exception {
   });
 
   /// Creates from Dio error (network failure or cancellation).
-  factory ApiError.fromDioError(DioError e) {
-    final kind = e.type == DioErrorType.cancel
+  factory ApiError.fromDioError(DioException e) {
+    final kind = e.type == DioExceptionType.cancel
         ? ApiErrorKind.cancelled
         : ApiErrorKind.networkFailure;
     return ApiError(
