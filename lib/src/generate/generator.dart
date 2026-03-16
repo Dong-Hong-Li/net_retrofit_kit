@@ -106,7 +106,7 @@ class NetRetrofitGenerator extends GeneratorForAnnotation<NetApi> {
 
   /// Builds body expression (@Body or @Part FormData).
   /// Contract: @Body can be a class model. If param type is not Map, generated
-  /// code uses `param.toJson()`, so model must implement `toJson`.
+  /// code uses `param.toJson()` or `param?.toJson()` when param is nullable.
   String? _buildBody(MethodElement method, MethodGeneratorConfig config) {
     if (config.bodyParam != null) {
       final paramName = config.bodyParam!;
@@ -120,7 +120,14 @@ class NetRetrofitGenerator extends GeneratorForAnnotation<NetApi> {
       final isMapType = bodyParamType != null &&
           bodyParamType is InterfaceType &&
           bodyParamType.element.name == 'Map';
-      final bodyValue = isMapType ? paramName : '$paramName.toJson()';
+      final isNullable = bodyParamType != null &&
+          bodyParamType.getDisplayString().endsWith('?');
+      final String bodyValue;
+      if (isMapType) {
+        bodyValue = paramName;
+      } else {
+        bodyValue = isNullable ? '$paramName?.toJson()' : '$paramName.toJson()';
+      }
       return 'body: $bodyValue';
     }
     if (config.partParams.isNotEmpty) {

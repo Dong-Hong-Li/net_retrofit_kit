@@ -8,6 +8,20 @@
 
 ---
 
+## [0.2.11](https://github.com/Dong-Hong-Li/net_retrofit_kit/releases/tag/v0.2.11) - 2026-03-16
+
+### Fixed / 修复
+
+**English**
+
+- **Nullable @Body()**: When the `@Body()` parameter type is nullable (e.g. `CreateWithdrawRequest? body`), the generator now emits `body?.toJson()` instead of `body.toJson()`, avoiding a null reference at runtime.
+
+**中文**
+
+- **可空 @Body()**：当 `@Body()` 参数为可空类型（如 `CreateWithdrawRequest? body`）时，生成器改为生成 `body?.toJson()`，不再生成 `body.toJson()`，避免运行时空引用。
+
+---
+
 ## [0.2.8](https://github.com/Dong-Hong-Li/net_retrofit_kit/releases/tag/v0.2.8) - 2026-03-06
 
 ### Added / 新增
