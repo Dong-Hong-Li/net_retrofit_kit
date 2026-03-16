@@ -14,7 +14,7 @@ Declarative HTTP client for Flutter: **annotations + codegen**, based on Dio. [G
 
 ```yaml
 dependencies:
-  net_retrofit_kit: ^0.2.8
+  net_retrofit_kit: ^0.2.11
   dio: ">=5.0.0"
 dev_dependencies:
   build_runner: ^2.4.0

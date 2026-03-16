@@ -2,12 +2,9 @@
 // Implementation class is DemoServerImpl; Repository delegates to it for requests.
 
 import 'dart:convert';
-
 import 'package:dio/dio.dart';
 import 'package:net_retrofit_kit/net_retrofit_kit.dart';
-
 import 'demo_model.dart';
-
 part 'demo_server.g.dart';
 
 /// Example 1: Basic API — @Get / @Post, @Body, streaming @StreamResponse.

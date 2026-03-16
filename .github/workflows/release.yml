@@ -1,5 +1,8 @@
 name: Release
 
+# 本地用 act 跑时：M 芯片 Mac 需加 --container-architecture linux/amd64，否则 Set up Flutter 会报
+# "Unable to determine Flutter version ... architecture: arm64"。例：act --pull=false --container-architecture linux/amd64
+
 # -----------------------------------------------------------------------------
 # on：触发条件
 # -----------------------------------------------------------------------------
@@ -38,6 +41,7 @@ jobs:
           flutter-version: '3.32.0'
           channel: 'stable'
           cache: true
+          architecture: 'x64'
 
       # 安装项目依赖
       - name: Install dependencies

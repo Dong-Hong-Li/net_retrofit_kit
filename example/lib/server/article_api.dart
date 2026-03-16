@@ -17,6 +17,10 @@ abstract class ArticleApi {
   @Post('/post')
   Future<ArticleModel?> createWithModel(@Body() CreateArticleRequest body);
 
+  /// Nullable body; generated code should call body?.toJson().
+  @Post('/post')
+  Future<ArticleModel?> createWithModelOptional(@Body() CreateArticleRequest? body);
+
   @Put('/put')
   Future<ArticleModel?> update(@Body() Map<String, dynamic> body);
 
