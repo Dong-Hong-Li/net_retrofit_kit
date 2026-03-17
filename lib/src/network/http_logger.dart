@@ -31,6 +31,9 @@ class HttpLogger {
     return defaultEnableLogging;
   }
 
+  /// When true, also print a single-line curl for easy copy-paste to terminal.
+  static bool curlSingleLineCopy = true;
+
   /// Logs request as a copyable curl command.
   static void logRequest(
     String url,
@@ -45,6 +48,13 @@ class HttpLogger {
     debugPrint('══════════════════════ cURL ══════════════════════════');
     for (final line in curlLines) {
       debugPrint(line);
+    }
+    if (curlSingleLineCopy) {
+      final oneLine = _buildCurlSingleLine(url, method, headers, body);
+      if (oneLine != null && oneLine.isNotEmpty) {
+        debugPrint('────────────────── copy as one line ──────────────────');
+        debugPrint(oneLine);
+      }
     }
     debugPrint('════════════════════════════════════════════════════════');
   }
@@ -100,6 +110,20 @@ class HttpLogger {
       lines[lines.length - 1] = lines.last.substring(0, lines.last.length - 2);
     }
     return lines;
+  }
+
+  /// Builds curl as a single line for easy copy-paste.
+  static String? _buildCurlSingleLine(
+    String url,
+    String method,
+    Map<String, dynamic>? headers,
+    dynamic body,
+  ) {
+    final lines = _buildCurlLines(url, method, headers, body);
+    if (lines.isEmpty) return null;
+    return lines
+        .map((s) => s.endsWith(' \\') ? s.substring(0, s.length - 2) : s)
+        .join(' ');
   }
 
   static String _escapeUrl(String s) {

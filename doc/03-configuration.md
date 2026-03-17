@@ -68,6 +68,18 @@ NetRequest.setClient('upload', YourNetClient(uploadDio));  // implement INetClie
 
 ---
 
+## Logging (curl)
+
+Request logging is done by the default interceptor. You can tune it via `HttpLogger`:
+
+| Item | Use |
+|------|-----|
+| `HttpLogger.logLevel` | `LogLevel.none` / `basic` (URL+method) / `headers` / `body` (full curl). |
+| `HttpLogger.defaultEnableLogging` | Whether logging is on by default (e.g. `true` in debug). |
+| `HttpLogger.curlSingleLineCopy` | When `true` (default), after the multi-line curl a **single-line** curl is printed so you can copy it in one go and paste into a terminal. Set to `false` to only show the multi-line curl. |
+
+---
+
 ## Test: inject Dio
 
 ```dart

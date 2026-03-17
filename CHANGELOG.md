@@ -8,6 +8,22 @@
 
 ---
 
+## [0.2.12](https://github.com/Dong-Hong-Li/net_retrofit_kit/releases/tag/v0.2.12) - 2026-03-16
+
+### Added / 新增
+
+**English**
+
+- **HttpLogger.curlSingleLineCopy**: When `true` (default), request logging prints a single-line curl after the multi-line one so you can copy it in one go and paste into a terminal. Set to `false` to only show the multi-line curl.
+- **Docs**: [Configuration](doc/03-configuration.md) / [配置](doc/03-配置.md) now document `HttpLogger.logLevel`, `defaultEnableLogging`, and `curlSingleLineCopy`.
+
+**中文**
+
+- **HttpLogger.curlSingleLineCopy**：为 `true`（默认）时，请求日志在多行 curl 下方再输出一行单行 curl，便于整段复制到终端。设为 `false` 则只显示多行 curl。
+- **文档**：[配置](doc/03-配置.md) / [Configuration](doc/03-configuration.md) 已补充 `HttpLogger.logLevel`、`defaultEnableLogging`、`curlSingleLineCopy` 说明。
+
+---
+
 ## [0.2.11](https://github.com/Dong-Hong-Li/net_retrofit_kit/releases/tag/v0.2.11) - 2026-03-16
 
 ### Fixed / 修复
