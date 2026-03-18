@@ -8,6 +8,20 @@
 
 ---
 
+## [0.2.13](https://github.com/Dong-Hong-Li/net_retrofit_kit/releases/tag/v0.2.13) - 2026-03-18
+
+### Added / 新增
+
+**English**
+
+- **CallOptions**: Per-call options (cancelToken, clientKey) for generated API methods. Prefer **optional positional** `[CallOptions? options]` so request-level options are distinct from API params in `{ }` (e.g. `void fn(required, [CallOptions? options], {named})`). When a method has other named params, use `{CallOptions? options}` (Dart disallows both `[]` and `{}` in the same method). Generator forwards `options?.cancelToken` and `options?.clientKey` to the request layer. Exported from `net_retrofit_kit.dart`. Documented in [Annotations](doc/02-annotations.md) / [注解说明](doc/02-注解说明.md), [CallOptions](lib/src/network/call_options.dart), and README quick reference.
+
+**中文**
+
+- **CallOptions**：为生成接口方法提供单次请求选项（cancelToken、clientKey）。推荐使用**可选位置参数** `[CallOptions? options]`，与 `{ }` 中的接口参数区分（如 `void fn(必填, [CallOptions? options], {可选命名})`）。若方法需其它命名参数，则用 `{CallOptions? options}`（Dart 不允许同方法同时使用 `[]` 与 `{}`）。生成器将 `options?.cancelToken`、`options?.clientKey` 透传到底层。已从 `net_retrofit_kit.dart` 导出，并在 [注解说明](doc/02-注解说明.md) / [Annotations](doc/02-annotations.md)、[CallOptions](lib/src/network/call_options.dart) 及 README 速查中说明。
+
+---
+
 ## [0.2.12](https://github.com/Dong-Hong-Li/net_retrofit_kit/releases/tag/v0.2.12) - 2026-03-16
 
 ### Added / 新增
