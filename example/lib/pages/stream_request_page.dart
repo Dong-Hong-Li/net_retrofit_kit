@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'package:net_retrofit_kit/net_retrofit_kit.dart';
 import 'package:net_retrofit_kit_example/server/demo_server.dart';
 
 /// Stream request demo: this page only awaits and displays final lines.
@@ -30,8 +31,8 @@ class _StreamRequestPageState extends State<StreamRequestPage> {
     _cancelToken = CancelToken();
 
     try {
-      final result =
-          await _repository.fetchStreamLines(cancelToken: _cancelToken);
+      final result = await _repository
+          .fetchStreamLines(CallOptions(cancelToken: _cancelToken));
       setState(() {
         _lines = ['Starting request...', ...result, '--- stream ended ---'];
         _loading = false;

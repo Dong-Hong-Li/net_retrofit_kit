@@ -14,6 +14,7 @@ export 'src/network/http_error.dart';
 export 'src/network/http_method.dart';
 export 'src/network/inet_client.dart';
 export 'src/network/istream_net_client.dart';
+export 'src/network/call_options.dart';
 export 'src/network/net_options.dart';
 export 'src/network/net_request.dart';
 export 'src/network/net_interceptor.dart';

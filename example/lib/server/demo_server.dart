@@ -2,29 +2,34 @@
 // Implementation class is DemoServerImpl; Repository delegates to it for requests.
 
 import 'dart:convert';
-import 'package:dio/dio.dart';
 import 'package:net_retrofit_kit/net_retrofit_kit.dart';
 import 'demo_model.dart';
 part 'demo_server.g.dart';
+
+/// Callback type for stream line consumption (avoids ambiguous ) in method signature).
+typedef OnStreamLine = void Function(String line);
 
 /// Example 1: Basic API — @Get / @Post, @Body, streaming @StreamResponse.
 @NetApi()
 abstract class DemoServer {
   @Post('/post')
-  Future<DemoModel?> login(@Body() Map<String, dynamic> body);
+  Future<DemoModel?> login(@Body() Map<String, dynamic> body,
+      [CallOptions? options]);
 
   @Get('/get')
-  Future<DemoModel?> getUserInfo();
+  Future<DemoModel?> getUserInfo([CallOptions? options]);
 
   @Post('/post')
-  Future<DemoModel?> googleLogin(@Body() Map<String, dynamic> body);
+  Future<DemoModel?> googleLogin(@Body() Map<String, dynamic> body,
+      [CallOptions? options]);
 
   @Post('/post')
-  Future<bool> saveArchives(@Body() Map<String, dynamic> body);
+  Future<bool> saveArchives(@Body() Map<String, dynamic> body,
+      [CallOptions? options]);
 
   @Get('/stream/3')
   @StreamResponse()
-  Future<Stream<String>> getStreamLines({CancelToken? cancelToken});
+  Future<Stream<String>> getStreamLines([CallOptions? options]);
 }
 
 /// Example Repository: delegates to [DemoServerImpl] for requests.
@@ -34,26 +39,28 @@ class DemoRepository {
   DemoRepository._();
   final _mapper = DemoServerImpl();
 
-  Future<DemoModel?> getUserInfo() async {
+  Future<DemoModel?> getUserInfo([CallOptions? options]) async {
     try {
-      return await _mapper.getUserInfo();
+      return await _mapper.getUserInfo(options);
     } catch (e) {
       return null;
     }
   }
 
-  Future<bool> saveArchives(Map<String, dynamic> body) async {
+  Future<bool> saveArchives(Map<String, dynamic> body,
+      [CallOptions? options]) async {
     try {
-      return await _mapper.saveArchives(body);
+      return await _mapper.saveArchives(body, options);
     } catch (e) {
       return false;
     }
   }
 
-  Future<bool> login(String mobile, String googleToken) async {
+  Future<bool> login(String mobile, String googleToken,
+      [CallOptions? options]) async {
     try {
-      await _mapper.login({'phone': mobile});
-      await _mapper.googleLogin({'google_token': googleToken});
+      await _mapper.login({'phone': mobile}, options);
+      await _mapper.googleLogin({'google_token': googleToken}, options);
       return true;
     } catch (e) {
       return false;
@@ -62,8 +69,8 @@ class DemoRepository {
 
   // Two ways to consume stream: (1) collect all lines then return List; (2) callback per line.
   /// Option 1: wait for full stream then return. Page can await and display [result].
-  Future<List<String>> fetchStreamLines({CancelToken? cancelToken}) async {
-    final stream = await _mapper.getStreamLines(cancelToken: cancelToken);
+  Future<List<String>> fetchStreamLines([CallOptions? options]) async {
+    final stream = await _mapper.getStreamLines(options);
     final lines = <String>[];
     await for (final line in stream) {
       if (line.trim().isNotEmpty) lines.add(line);
@@ -71,12 +78,10 @@ class DemoRepository {
     return lines;
   }
 
-  /// Option 2: callback per line via [onLine]. Page can setState in the callback to append in real time.
-  Future<void> forEachStreamLine({
-    CancelToken? cancelToken,
-    required void Function(String line) onLine,
-  }) async {
-    final stream = await _mapper.getStreamLines(cancelToken: cancelToken);
+  /// Option 2: callback per line via [onLine]. Dart does not allow [optional positional] + {named} in one method, so options is named here.
+  Future<void> forEachStreamLine(
+      {CallOptions? options, required OnStreamLine onLine}) async {
+    final stream = await _mapper.getStreamLines(options);
     await for (final line in stream) {
       if (line.trim().isNotEmpty) onLine(line);
     }

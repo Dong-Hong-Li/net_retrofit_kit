@@ -174,6 +174,37 @@ class NetRetrofitGenerator extends GeneratorForAnnotation<NetApi> {
         p.type.getDisplayString().contains('CancelToken'));
   }
 
+  /// Whether method includes [CallOptions? options]: optional positional [] or named {options}.
+  /// Prefer optional positional so request-level options are distinct from API named params.
+  /// Dart does not allow both optional positional and named in the same method, so methods
+  /// that need other named params (e.g. onLine) must use named {CallOptions? options}.
+  bool _hasCallOptionsParameter(MethodElement method) {
+    return method.formalParameters.any((p) {
+      final typeStr = p.type.getDisplayString();
+      if (!typeStr.contains('CallOptions')) return false;
+      return p.isOptionalPositional ||
+          (p.isNamed && (p.name ?? p.displayName) == 'options');
+    });
+  }
+
+  /// Parameter name for CallOptions (used in generated body, e.g. options?.cancelToken).
+  String? _getCallOptionsParameterName(MethodElement method) {
+    for (final p in method.formalParameters) {
+      if (!p.type.getDisplayString().contains('CallOptions')) continue;
+      if (p.isOptionalPositional ||
+          (p.isNamed && (p.name ?? p.displayName) == 'options')) {
+        return p.name ?? p.displayName;
+      }
+    }
+    return null;
+  }
+
+  /// ClientKey value expression from config for use in options?.clientKey ?? value.
+  String? _buildClientKeyValue(MethodGeneratorConfig config) {
+    if (config.clientKey == null) return null;
+    return "'${config.clientKey}'";
+  }
+
   /// Builds parser expression from return type
   /// (fromJson or `as` cast; with @DataPath uses `json[path]`).
   String _buildParser(MethodGeneratorConfig config) {
@@ -215,6 +246,9 @@ class NetRetrofitGenerator extends GeneratorForAnnotation<NetApi> {
     }
 
     final buffer = StringBuffer();
+    final optName = _getCallOptionsParameterName(method);
+    final hasOpt = _hasCallOptionsParameter(method);
+
     buffer.writeln('  @override');
     buffer.writeln('  $returnTypeStr ${method.name}($paramsStr) async {');
     buffer.writeln(
@@ -229,9 +263,20 @@ class NetRetrofitGenerator extends GeneratorForAnnotation<NetApi> {
     if (headers != null) buffer.writeln('      $headers,');
     final contentType = _buildContentType(config);
     if (contentType != null) buffer.writeln('      $contentType,');
-    final clientKey = _buildClientKey(config);
-    if (clientKey != null) buffer.writeln('      $clientKey,');
-    if (_hasCancelTokenParameter(method)) {
+    if (hasOpt && optName != null) {
+      final ckVal = _buildClientKeyValue(config);
+      buffer.writeln(ckVal != null
+          ? "      clientKey: $optName?.clientKey ?? $ckVal,"
+          : '      clientKey: $optName?.clientKey,');
+    } else {
+      final clientKey = _buildClientKey(config);
+      if (clientKey != null) buffer.writeln('      $clientKey,');
+    }
+    if (hasOpt && optName != null) {
+      buffer.writeln(_hasCancelTokenParameter(method)
+          ? '      cancelToken: $optName?.cancelToken ?? cancelToken,'
+          : '      cancelToken: $optName?.cancelToken,');
+    } else if (_hasCancelTokenParameter(method)) {
       buffer.writeln('      cancelToken: cancelToken,');
     }
     buffer.writeln('      ${_buildParser(config)},');
@@ -249,6 +294,9 @@ class NetRetrofitGenerator extends GeneratorForAnnotation<NetApi> {
       String paramsStr,
       String typeArg) {
     final buffer = StringBuffer();
+    final optName = _getCallOptionsParameterName(method);
+    final hasOpt = _hasCallOptionsParameter(method);
+
     buffer.writeln('  @override');
     buffer.writeln('  $returnTypeStr ${method.name}($paramsStr) async {');
     buffer.writeln(
@@ -257,9 +305,20 @@ class NetRetrofitGenerator extends GeneratorForAnnotation<NetApi> {
     buffer.writeln('      method: ${config.method},');
     final q = _buildQueryParameters(config);
     if (q != null) buffer.writeln('      $q,');
-    final clientKey = _buildClientKey(config);
-    if (clientKey != null) buffer.writeln('      $clientKey,');
-    if (_hasCancelTokenParameter(method)) {
+    if (hasOpt && optName != null) {
+      final ckVal = _buildClientKeyValue(config);
+      buffer.writeln(ckVal != null
+          ? "      clientKey: $optName?.clientKey ?? $ckVal,"
+          : '      clientKey: $optName?.clientKey,');
+    } else {
+      final clientKey = _buildClientKey(config);
+      if (clientKey != null) buffer.writeln('      $clientKey,');
+    }
+    if (hasOpt && optName != null) {
+      buffer.writeln(_hasCancelTokenParameter(method)
+          ? '      cancelToken: $optName?.cancelToken ?? cancelToken,'
+          : '      cancelToken: $optName?.cancelToken,');
+    } else if (_hasCancelTokenParameter(method)) {
       buffer.writeln('      cancelToken: cancelToken,');
     }
     buffer.writeln('    );');

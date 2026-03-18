@@ -4,8 +4,9 @@
 // Parameter mapping:
 // url=baseUrl+path, method, queryParameters, body, headers, contentType,
 // clientKey, and parser are generated from annotations and return type.
-// cancelToken is forwarded when a method defines optional
-// CancelToken? cancelToken; extra/enableLogging have no annotations.
+// cancelToken: from optional CancelToken? cancelToken, or from CallOptions? options.
+// [CallOptions? options]: prefer optional positional so not confused with API params in {}.
+// When method has other named params, use {CallOptions? options} (Dart disallows []+{} in one method).
 
 import 'package:net_retrofit_kit/src/network/net_content_type.dart';
 
@@ -51,7 +52,7 @@ class NetApi {
 /// | [headers] | merged @Header(name) arguments |
 /// | [extra] | no annotation, generator may omit |
 /// | [enableLogging] | no annotation, generator defaults to false |
-/// | [cancelToken] | forwarded from optional CancelToken? cancelToken argument |
+/// | [cancelToken] | optional CancelToken? cancelToken, or [CallOptions? options] (positional or named 'options') |
 /// | [parser] | generated from return type + @DataPath |
 /// | formData / file upload | [contentType]=formData, [body]=FormData/Map (file values use MultipartFile); @Part(name) can be merged into FormData |
 
@@ -113,13 +114,12 @@ class DataPath {
 /// - `Future<Stream<String>>`: use [SseStreamParser.parse](response.data!.stream)
 ///   for SSE, or utf8.decoder + LineSplitter for line-by-line parsing.
 /// - `Future<Stream<List<int>>>`: return `response.data?.stream` directly.
-/// Optional params like [cancelToken] should be forwarded; caller owns
-/// consuming/cancelling/closing the stream lifecycle.
+/// Optional [CallOptions? options] (positional or named) is forwarded (cancelToken, clientKey).
 ///
 /// ```dart
 /// @Get('/stream')
 /// @StreamResponse()
-/// Future<Stream<String>> getStream({CancelToken? cancelToken});
+/// Future<Stream<String>> getStream([CallOptions? options]);
 /// ```
 class StreamResponse {
   const StreamResponse();

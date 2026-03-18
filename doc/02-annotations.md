@@ -14,6 +14,7 @@
 | `@DataPath('key')` | Method | Parse from `response.data['key']` |
 | `@Part('file')` | Param | Multipart part (use with `ContentType.formData`) |
 | `@StreamResponse()` | Method | Return stream (SSE / line stream) |
+| `[CallOptions? options]` (optional positional) | Method | Per-call options: cancelToken, clientKey; in `[]` to distinguish from API params in `{}`. Use `{CallOptions? options}` when method has other named params (Dart disallows `[]` + `{}` in same method) |
 
 ---
 
@@ -87,11 +88,43 @@ Future<Result?> upload(@Part('file') File file, @Part('name') String name);
 ```dart
 @Get('/stream/3')
 @StreamResponse()
-Future<Stream<String>> getStreamLines({CancelToken? cancelToken});
+Future<Stream<String>> getStreamLines({CallOptions? options});
 ```
 
 ---
 
-## Optional: RequestOptions? options
+## [CallOptions? options] (per-call options, distinct from API params)
 
-Last optional param on a method: generator passes it through (e.g. for loading/error wrapper).
+Use **optional positional** `[CallOptions? options]` so request-level options are not confused with API params (which use named `{ }`):  
+`void fn(required, [CallOptions? options], {named})`.  
+When the method has other named params, Dart does not allow both `[]` and `{}` in the same method, so use `{CallOptions? options}` there.
+
+### Generator logic
+
+- **Detection**: optional **positional** param of type `CallOptions?`, or **named** param named `options` of type `CallOptions?`.
+- **Regular/stream requests**: generates `clientKey: options?.clientKey`, `cancelToken: options?.cancelToken`. When `options` is omitted, those are null.
+
+### Interface and example
+
+```dart
+@Get('/get')
+Future<DemoModel?> getUserInfo([CallOptions? options]);
+
+@Post('/post')
+Future<DemoModel?> login(@Body() Map<String, dynamic> body, [CallOptions? options]);
+
+@Get('/stream/3')
+@StreamResponse()
+Future<Stream<String>> getStreamLines([CallOptions? options]);
+```
+
+**Call site (positional):**
+
+```dart
+await api.getUserInfo();
+await api.getStreamLines(CallOptions(cancelToken: token));
+await api.getUserInfo(CallOptions(clientKey: 'upload'));
+```
+
+**StreamRequestPage:**  
+`fetchStreamLines(CallOptions(cancelToken: _cancelToken));`
