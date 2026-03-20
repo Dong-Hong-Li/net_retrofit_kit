@@ -14,7 +14,7 @@ Declarative HTTP client for Flutter: **annotations + codegen**, based on Dio. [G
 
 ```yaml
 dependencies:
-  net_retrofit_kit: ^0.2.13
+  net_retrofit_kit: ^0.2.14
   dio: ">=5.0.0"
 dev_dependencies:
   build_runner: ^2.4.0
@@ -65,6 +65,7 @@ abstract class UserApi {
 | `@Part('file')` | Multipart part (with `ContentType.formData`). |
 | `@StreamResponse()` | Return stream (SSE / line stream). |
 | `[CallOptions? options]` | Optional positional per-call options (cancelToken, clientKey). Use `{CallOptions? options}` when the method has other named params. See [Annotations](doc/02-annotations.md). |
+| `Future<List<T>>` + `T.fromJson` | Generator auto maps JSON arrays into models instead of direct `as List<T>` cast. |
 
 More: [Annotations](https://github.com/Dong-Hong-Li/net_retrofit_kit/blob/main/doc/02-annotations.md) · [Configuration](https://github.com/Dong-Hong-Li/net_retrofit_kit/blob/main/doc/03-configuration.md) · [Multiple clients](https://github.com/Dong-Hong-Li/net_retrofit_kit/blob/main/doc/04-multi-client.md) · [Example](https://github.com/Dong-Hong-Li/net_retrofit_kit/blob/main/doc/05-example.md)
 

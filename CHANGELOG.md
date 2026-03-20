@@ -8,13 +8,28 @@
 
 ---
 
+## [0.2.14](https://github.com/Dong-Hong-Li/net_retrofit_kit/releases/tag/v0.2.14) - 2026-03-18
+
+### Changed / 变更
+
+**English**
+
+- **Generator List parser**: For return type `List<T>`, when `T.fromJson` exists, generated parser now auto maps JSON arrays to models: `(json as List).map((e) => T.fromJson(e as Map<String, dynamic>)).toList()`. This avoids unsafe direct cast like `json as List<T>` for DTO lists.
+
+**中文**
+
+- **生成器 List 解析增强**：当返回类型为 `List<T>` 且 `T.fromJson` 存在时，生成器自动生成数组到模型的映射解析：`(json as List).map((e) => T.fromJson(e as Map<String, dynamic>)).toList()`，避免 DTO 列表场景下直接 `json as List<T>` 的不安全转换。
+
+---
+
 ## [0.2.13](https://github.com/Dong-Hong-Li/net_retrofit_kit/releases/tag/v0.2.13) - 2026-03-18
 
 ### Added / 新增
 
 **English**
 
-- **CallOptions**: Per-call options (cancelToken, clientKey) for generated API methods. Prefer **optional positional** `[CallOptions? options]` so request-level options are distinct from API params in `{ }` (e.g. `void fn(required, [CallOptions? options], {named})`). When a method has other named params, use `{CallOptions? options}` (Dart disallows both `[]` and `{}` in the same method). Generator forwards `options?.cancelToken` and `options?.clientKey` to the request layer. Exported from `net_retrofit_kit.dart`. Documented in [Annotations](doc/02-annotations.md) / [注解说明](doc/02-注解说明.md), [CallOptions](lib/src/network/call_options.dart), and README quick reference.
+- **CallOptions**: Per-call options (cancelToken, clientKey) for generated API methods. Prefer **optional positional** `[CallOptions? options]` so request-level options are distinct from API params in `{ }` (e.g. `void fn(required, [CallOptions? options], {named})`). When a method has other named params, use `{CallOptions? options}` (Dart disallows both `[]` and `{}` in the same method). Generator forwards `op
+tions?.cancelToken` and `options?.clientKey` to the request layer. Exported from `net_retrofit_kit.dart`. Documented in [Annotations](doc/02-annotations.md) / [注解说明](doc/02-注解说明.md), [CallOptions](lib/src/network/call_options.dart), and README quick reference.
 
 **中文**
 

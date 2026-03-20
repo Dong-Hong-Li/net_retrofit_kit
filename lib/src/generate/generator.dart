@@ -205,9 +205,50 @@ class NetRetrofitGenerator extends GeneratorForAnnotation<NetApi> {
     return "'${config.clientKey}'";
   }
 
-  /// Builds parser expression from return type
-  /// (fromJson or `as` cast; with @DataPath uses `json[path]`).
-  String _buildParser(MethodGeneratorConfig config) {
+  DartType _unwrapFutureType(DartType type) {
+    if (type is InterfaceType &&
+        type.element.name == 'Future' &&
+        type.typeArguments.length == 1) {
+      return type.typeArguments.first;
+    }
+    return type;
+  }
+
+  bool _hasFromJsonFactory(InterfaceType type) {
+    final element = type.element;
+    final hasNamedCtor = element.constructors.any((c) => c.name == 'fromJson');
+    final hasStaticMethod = element.methods.any(
+      (m) => m.isStatic && m.name == 'fromJson',
+    );
+    return hasNamedCtor || hasStaticMethod;
+  }
+
+  String? _buildAutoListParser(
+    MethodElement method,
+    MethodGeneratorConfig config,
+  ) {
+    final returnType = _unwrapFutureType(method.returnType);
+    if (returnType is! InterfaceType || returnType.element.name != 'List') {
+      return null;
+    }
+    if (returnType.typeArguments.length != 1) return null;
+
+    final itemType = returnType.typeArguments.first;
+    if (itemType is! InterfaceType) return null;
+    if (!_hasFromJsonFactory(itemType)) return null;
+
+    final itemTypeName = itemType.getDisplayString();
+    final sourceExpr = config.parserConfig.dataPath != null
+        ? '(json as Map<String, dynamic>)["${config.parserConfig.dataPath}"]'
+        : 'json';
+    return 'parser: (json) => ($sourceExpr as List).map((e) => $itemTypeName.fromJson(e as Map<String, dynamic>)).toList()';
+  }
+
+  /// Builds parser expression from return type.
+  /// For `List<T>`, auto-generates list mapping when `T.fromJson` exists.
+  String _buildParser(MethodElement method, MethodGeneratorConfig config) {
+    final autoList = _buildAutoListParser(method, config);
+    if (autoList != null) return autoList;
     return buildParserExpression(
       config.parserConfig.returnTypeName,
       config.parserConfig.dataPath,
@@ -279,7 +320,7 @@ class NetRetrofitGenerator extends GeneratorForAnnotation<NetApi> {
     } else if (_hasCancelTokenParameter(method)) {
       buffer.writeln('      cancelToken: cancelToken,');
     }
-    buffer.writeln('      ${_buildParser(config)},');
+    buffer.writeln('      ${_buildParser(method, config)},');
     buffer.writeln('    );');
     buffer.writeln('    ${_buildReturnData(typeArg)}');
     buffer.writeln('  }');

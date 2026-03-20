@@ -14,7 +14,7 @@
 
 ```yaml
 dependencies:
-  net_retrofit_kit: ^0.2.13
+  net_retrofit_kit: ^0.2.14
   dio: ">=5.0.0"
 dev_dependencies:
   build_runner: ^2.4.0
@@ -65,6 +65,7 @@ abstract class UserApi {
 | `@Part('file')` | 多部分表单（配合 `ContentType.formData`）。 |
 | `@StreamResponse()` | 返回流（SSE / 按行）。 |
 | `[CallOptions? options]` | 可选位置参数，单次请求选项（cancelToken、clientKey）。方法有其它命名参数时用 `{CallOptions? options}`。见 [注解说明](doc/02-注解说明.md)。 |
+| `Future<List<T>>` + `T.fromJson` | 生成器会自动把 JSON 数组映射为模型列表，不再直接 `as List<T>` 转换。 |
 
 更多：[注解说明](https://github.com/Dong-Hong-Li/net_retrofit_kit/blob/main/doc/02-注解说明.md) · [配置](https://github.com/Dong-Hong-Li/net_retrofit_kit/blob/main/doc/03-配置.md) · [多 Client](https://github.com/Dong-Hong-Li/net_retrofit_kit/blob/main/doc/04-多Client.md) · [示例](https://github.com/Dong-Hong-Li/net_retrofit_kit/blob/main/doc/05-示例.md)
 
