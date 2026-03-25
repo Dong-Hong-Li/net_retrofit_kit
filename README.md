@@ -6,6 +6,18 @@
 
 Declarative HTTP client for Flutter: **annotations + codegen**, based on Dio. [GitHub](https://github.com/Dong-Hong-Li/net_retrofit_kit)
 
+## Package status: discontinued
+
+This package is **discontinued** on [pub.dev](https://pub.dev/packages/net_retrofit_kit). Existing versions stay installable for current dependents, but **no further releases or maintenance** are planned from this line.
+
+**What you can do:**
+
+- **Stay on a pinned version** if it already works for your app.
+- **Fork** [the repository](https://github.com/Dong-Hong-Li/net_retrofit_kit) and publish or depend via `git:` / path if you need changes.
+- **Migrate** to alternatives such as [Dio](https://pub.dev/packages/dio) with [retrofit](https://pub.dev/packages/retrofit), [chopper](https://pub.dev/packages/chopper), or a custom `build_runner` setup.
+
+If you publish a successor package, you can set **`replaced_by`** in `pubspec.yaml` on a future publish (or in the pub.dev admin UI) to point users to it.
+
 ---
 
 ## Quick start
@@ -14,7 +26,7 @@ Declarative HTTP client for Flutter: **annotations + codegen**, based on Dio. [G
 
 ```yaml
 dependencies:
-  net_retrofit_kit: ^0.2.14
+  net_retrofit_kit: ^0.2.15
   dio: ">=5.0.0"
 dev_dependencies:
   build_runner: ^2.4.0

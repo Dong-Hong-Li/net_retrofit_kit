@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
-import 'package:net_retrofit_kit/src/network/net_content_type.dart';
 import 'package:net_retrofit_kit/src/network/http_constant.dart';
 import 'package:net_retrofit_kit/src/network/http_method.dart';
+import 'package:net_retrofit_kit/src/network/net_content_type.dart';
 
 /// Regular HTTP client abstraction for easier mocking and replacement.
 ///
@@ -26,7 +26,8 @@ abstract class INetClient {
   /// - [headers] / [extra] request headers and extension metadata.
   /// - [enableLogging] whether to enable logging for this request.
   /// - [cancelToken] cancellation token.
-  /// - [parser] parses `response.data` into T.
+  /// - [parser] parses the business payload inside the JSON envelope into T
+  ///   (see [BaseResponse.data]).
   Future<BaseResponse<T>> requestHttp<T>({
     required String url,
     required HttpMethod method,

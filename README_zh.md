@@ -6,6 +6,18 @@
 
 声明式 HTTP 客户端：**注解 + 代码生成**，基于 Dio。[GitHub](https://github.com/Dong-Hong-Li/net_retrofit_kit)
 
+## 包状态：已停止维护（discontinued）
+
+本包已在 [pub.dev](https://pub.dev/packages/net_retrofit_kit) 标记为 **discontinued（停产）**。历史版本仍可被已有项目依赖安装，但**本条维护线不再计划发新版或持续修缺陷**。
+
+**你可以：**
+
+- **锁定版本**：若当前版本已满足需求，继续在 `pubspec.yaml` 里固定版本即可。
+- **Fork 仓库**：[GitHub 源码](https://github.com/Dong-Hong-Li/net_retrofit_kit)，通过 `git:` / path 依赖自行维护。
+- **迁移方案**：例如 [Dio](https://pub.dev/packages/dio) + [retrofit](https://pub.dev/packages/retrofit)、[chopper](https://pub.dev/packages/chopper)，或自建 `build_runner` 生成逻辑。
+
+若你有替代包，可在后续发布时在 `pubspec.yaml` 中设置 **`replaced_by`**（或在 pub.dev 后台）指向新包名，便于用户迁移。
+
 ---
 
 ## 快速开始
@@ -14,7 +26,7 @@
 
 ```yaml
 dependencies:
-  net_retrofit_kit: ^0.2.14
+  net_retrofit_kit: ^0.2.15
   dio: ">=5.0.0"
 dev_dependencies:
   build_runner: ^2.4.0

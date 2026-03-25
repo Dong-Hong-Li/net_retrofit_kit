@@ -1,5 +1,7 @@
 # Docs
 
+> **注意**：`net_retrofit_kit` 已标记为 **discontinued（停产）**，详见仓库根目录 [README](../README.md) / [README_zh](../README_zh.md)。
+
 **Quick links:**
 
 

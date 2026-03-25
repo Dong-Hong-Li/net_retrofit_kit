@@ -8,6 +8,20 @@
 
 ---
 
+## [0.2.15](https://github.com/Dong-Hong-Li/net_retrofit_kit/releases/tag/v0.2.15) - 2026-03-25
+
+### Deprecated / 停止维护
+
+**English**
+
+- **Package discontinued**: Marked `discontinued: true` in `pubspec.yaml` for pub.dev. README / README_zh / doc index updated with migration guidance. No functional code changes; version bump for metadata and documentation only.
+
+**中文**
+
+- **包已停产**：在 `pubspec.yaml` 中设置 `discontinued: true` 以与 pub.dev 一致。已更新 README、README_zh、文档索引中的说明与迁移建议。无功能代码变更，仅元数据与文档版本号。
+
+---
+
 ## [0.2.14](https://github.com/Dong-Hong-Li/net_retrofit_kit/releases/tag/v0.2.14) - 2026-03-18
 
 ### Changed / 变更
